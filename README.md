@@ -1,12 +1,15 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
-
 ## Bắt đầu dự án
+- B1
+- Chạy lệnh composer install để tải các thư viện đã cài 
 
+-B2
+- thêm các phần này vào .env
+- CLOUDINARY_URL="cloudinary://574364957949139:xQcPHF7xi-X12Rrft5vzPHgT5Ks@dtuffzxyb"
+- CLOUDINARY_UPLOAD_PRESET=bep-viet
+- CLOUDINARY_NOTIFICATION_URL=
+- CLOUDINARY_CLOUD_NAME=dtuffzxyb
+- CLOUDINARY_KEY=574364957949139
+- CLOUDINARY_SECRET=xQcPHF7xi-X12Rrft5vzPHgT5Ks
+
+- B3
 - Chạy bằng lệnh php artisan serve
