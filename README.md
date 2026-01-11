@@ -13,3 +13,5 @@
 
 - B3
 - Chạy bằng lệnh php artisan serve
+
+- api bên trong routes/api.php
