@@ -15,3 +15,4 @@
 - Chạy bằng lệnh php artisan serve
 
 - api bên trong routes/api.php
+- php artisan jwt:secret
