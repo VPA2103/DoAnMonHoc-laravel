@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class NguoiDung extends Authenticatable
+class NguoiDung extends Authenticatable implements JWTSubject
 {
     use HasFactory;
 
@@ -79,5 +80,18 @@ class NguoiDung extends Authenticatable
     public function toCaos()
     {
         return $this->hasMany(ToCao::class, 'ma_nguoi_dung');
+    }
+
+    public function getJWTIdentifier()
+    {
+        // ⚠️ PHẢI string
+        return (string) $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [
+            'vai_tro' => $this->vai_tro
+        ];
     }
 }

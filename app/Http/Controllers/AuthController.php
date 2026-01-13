@@ -14,45 +14,56 @@ class AuthController extends Controller
 {
     private $fakeUsers = [
         [
-            'id' => 1,
             'email' => 'admin@gmail.com',
             'password' => '123456',
             'role' => 'admin',
             'name' => 'Admin'
         ],
-        [
-            'id' => 2,
-            'email' => 'user@gmail.com',
-            'password' => '123456',
-            'role' => 'user',
-            'name' => 'User'
-        ]
+        
     ];
     public function login(Request $request)
     {
-        $user = collect($this->fakeUsers)->first(
-            fn($u) =>
-            $u['email'] === $request->email &&
-                $u['password'] === $request->password
-        );
+        $request->validate([
+            'email'    => 'required|email',
+            'password' => 'required'
+        ]);
+
+        // Tìm user theo email
+        $user = NguoiDung::where('email', $request->email)->first();
 
         if (!$user) {
-            return response()->json(['message' => 'Sai tài khoản'], 401);
+            return response()->json([
+                'message' => 'Email không tồn tại'
+            ], 401);
         }
 
-        $fakeUser = new FakeUser(
-            (string) $user['id'],
-            $user['email'],
-            $user['role'],
-            $user['name']
-        );
+        // Kiểm tra mật khẩu
+        if (!Hash::check($request->password, $user->mat_khau)) {
+            return response()->json([
+                'message' => 'Mật khẩu không đúng'
+            ], 401);
+        }
 
-        $token = JWTAuth::fromUser($fakeUser);
+        // Kiểm tra trạng thái
+        if ($user->trang_thai != 1) {
+            return response()->json([
+                'message' => 'Tài khoản đã bị khóa'
+            ], 403);
+        }
+
+        // Tạo token JWT
+        $token = JWTAuth::fromUser($user);
 
         return response()->json([
             'access_token' => $token,
             'token_type'   => 'Bearer',
-            'user'         => $user
+            'user' => [
+                'id'       => $user->ma_nguoi_dung,
+                'ten'      => $user->ten_nguoi_dung,
+                'email'    => $user->email,
+                'vai_tro'  => $user->vai_tro,
+                'avatar'   => $user->anh_dai_dien,
+            ]
         ]);
     }
 
