@@ -10,7 +10,10 @@ class NguoiDung extends Authenticatable
     use HasFactory;
 
     protected $table = 'nguoi_dung';
+    protected $primaryKey = 'ma_nguoi_dung';
 
+    public $incrementing = true;
+    public $timestamps = false;
     protected $fillable = [
         'ten_nguoi_dung',
         'email',
