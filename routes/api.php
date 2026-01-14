@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\NguoiDungController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UploadController;
@@ -18,4 +19,8 @@ Route::post('/register', [AuthController::class, 'register']);
 
 Route::middleware(['auth:api', 'vai_tro:user'])->group(function () {
     Route::get('/profile', [NguoiDungController::class, 'GetNguoiDungID']);
+});
+
+Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
+    Route::get('/profile', [AdminController::class, 'GetNguoiDungID']);
 });
