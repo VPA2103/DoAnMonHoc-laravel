@@ -59,10 +59,10 @@ class AuthController extends Controller
             'token_type'   => 'Bearer',
             'user' => [
                 'id'       => $user->ma_nguoi_dung,
-                'ten'      => $user->ten_nguoi_dung,
+                'ten_nguoi_dung'      => $user->ten_nguoi_dung,
                 'email'    => $user->email,
                 'vai_tro'  => $user->vai_tro,
-                'avatar'   => $user->anh_dai_dien,
+                'anh_dai_dien'   => $user->anh_dai_dien,
             ]
         ]);
     }

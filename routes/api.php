@@ -19,8 +19,9 @@ Route::post('/register', [AuthController::class, 'register']);
 
 Route::middleware(['auth:api', 'vai_tro:user'])->group(function () {
     Route::get('/profile', [NguoiDungController::class, 'GetNguoiDungID']);
+    Route::post('/profile/edit', [NguoiDungController::class, 'updateProfile']);
 });
 
 Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
-    Route::get('/profile', [AdminController::class, 'GetNguoiDungID']);
+    Route::get('/admin', [AdminController::class, 'GetNguoiDungID']);
 });
