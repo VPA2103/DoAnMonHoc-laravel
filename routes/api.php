@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\NguoiDungController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PasswordOtpController;
 use App\Http\Controllers\UploadController;
 use Illuminate\Support\Facades\Route;
 
@@ -13,9 +14,9 @@ Route::get('/test-cloudinary', function () {
 });
 
 Route::post('/login', [AuthController::class, 'login']);
-
-
 Route::post('/register', [AuthController::class, 'register']);
+
+
 
 Route::middleware(['auth:api', 'vai_tro:user'])->group(function () {
     Route::get('/profile', [NguoiDungController::class, 'GetNguoiDungID']);
@@ -25,3 +26,6 @@ Route::middleware(['auth:api', 'vai_tro:user'])->group(function () {
 Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
     Route::get('/admin', [AdminController::class, 'GetNguoiDungID']);
 });
+
+Route::post('/send-otp', [PasswordOtpController::class, 'sendOtp']);
+Route::post('/reset-password-otp', [PasswordOtpController::class, 'resetPassword']);

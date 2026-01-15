@@ -17,7 +17,7 @@ class NguoiDungSeeder extends Seeder
         DB::table('nguoi_dung')->insert([
             'ten_nguoi_dung' => 'Admin',
             'email' => 'admin@gmail.com',
-            'mat_khau' => Hash::make('123456'), // mật khẩu admin
+            'mat_khau' => Hash::make('123456'),
             'anh_dai_dien' => null,
             'vai_tro' => 'admin',
             'trang_thai' => 1,
@@ -26,7 +26,7 @@ class NguoiDungSeeder extends Seeder
         DB::table('nguoi_dung')->insert([
             'ten_nguoi_dung' => 'User',
             'email' => 'user@gmail.com',
-            'mat_khau' => Hash::make('123456'), // mật khẩu user
+            'mat_khau' => Hash::make('123456'),
             'anh_dai_dien' => null,
             'vai_tro' => 'user',
             'trang_thai' => 1,
