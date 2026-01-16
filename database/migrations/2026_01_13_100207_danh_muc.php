@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id('ma_danh_muc');
             $table->string('ten_danh_muc');
             $table->string('loai')->nullable();
+            $table->timestamps();
         });
     }
 
