@@ -25,6 +25,12 @@ Route::middleware(['auth:api', 'vai_tro:user'])->group(function () {
 
 Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
     Route::get('/admin', [AdminController::class, 'GetNguoiDungID']);
+    Route::get('/users', [NguoiDungController::class, 'HienThiDSNguoiDung']);
+    Route::get('/users/{id}', [NguoiDungController::class, 'LayThongTinTheoId']);
+    Route::post('/users', [NguoiDungController::class, 'TaoNguoiDung']);
+    Route::post('/users/{id}', [NguoiDungController::class, 'CapNhapNguoiDungTheoId']);
+    Route::delete('/users/{id}', [NguoiDungController::class, 'XoaNguoiDungTheoId']);
+    
 });
 
 Route::post('/send-otp', [PasswordOtpController::class, 'sendOtp']);
