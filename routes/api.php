@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AdminController;
+use App\Http\Controllers\Api\DanhMucController;
 use App\Http\Controllers\Api\NguoiDungController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PasswordOtpController;
@@ -25,6 +26,10 @@ Route::middleware(['auth:api', 'vai_tro:user'])->group(function () {
 
 Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
     Route::get('/admin', [AdminController::class, 'GetNguoiDungID']);
+    Route::get('/admin/danh-muc', [DanhMucController::class, 'index']);
+    Route::post('/admin/danh-muc', [DanhMucController::class, 'store']);
+    Route::put('/admin/danh-muc/{id}', [DanhMucController::class, 'update']);
+    Route::delete('/admin/danh-muc/{id}', [DanhMucController::class, 'destroy']);
 });
 
 Route::post('/send-otp', [PasswordOtpController::class, 'sendOtp']);

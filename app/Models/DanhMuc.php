@@ -10,8 +10,10 @@ class DanhMuc extends Model
     use HasFactory;
 
     protected $table = 'danh_muc';
+    protected $primaryKey = 'ma_danh_muc'; // 👈 thêm
+    public $timestamps = true; // nếu dùng cách A
 
-    protected $fillable = ['ten_danh_muc'];
+    protected $fillable = ['ten_danh_muc', 'loai'];
 
     public function congThucs()
     {
