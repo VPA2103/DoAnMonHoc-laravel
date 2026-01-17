@@ -11,6 +11,11 @@ class CongThuc extends Model
 
     protected $table = 'cong_thuc';
 
+    // 🔴 DB không dùng id
+    protected $primaryKey = 'ma_cong_thuc';
+
+    public $timestamps = true;
+
     protected $fillable = [
         'ten_cong_thuc',
         'mo_ta',
@@ -40,7 +45,9 @@ class CongThuc extends Model
 
     public function binhLuans()
     {
-        return $this->hasMany(BinhLuan::class, 'ma_cong_thuc');
+        return $this->hasMany(BinhLuan::class, 'ma_cong_thuc')
+                    ->where('trang_thai', 1)
+                    ->orderByDesc('created_at');
     }
 
     public function danhGias()
@@ -53,4 +60,3 @@ class CongThuc extends Model
         return $this->hasMany(YeuThich::class, 'ma_cong_thuc');
     }
 }
-

@@ -11,7 +11,16 @@ class BinhLuan extends Model
 
     protected $table = 'binh_luan';
 
-    protected $fillable = ['noi_dung', 'ma_nguoi_dung', 'ma_cong_thuc'];
+    protected $primaryKey = 'ma_binh_luan';
+
+    public $timestamps = true;
+
+    protected $fillable = [
+        'noi_dung',
+        'ma_nguoi_dung',
+        'ma_cong_thuc',
+        'trang_thai'
+    ];
 
     public function nguoiDung()
     {
@@ -23,4 +32,3 @@ class BinhLuan extends Model
         return $this->belongsTo(CongThuc::class, 'ma_cong_thuc');
     }
 }
-
