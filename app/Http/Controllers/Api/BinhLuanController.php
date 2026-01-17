@@ -19,7 +19,7 @@ class BinhLuanController extends Controller
                 'message' => 'Unauthenticated'
             ], 401);
         }
-
+        //hello
         $binhLuans = BinhLuan::with('congThuc')
             ->where('ma_nguoi_dung', $user->ma_nguoi_dung)
             ->where('trang_thai', 1)
