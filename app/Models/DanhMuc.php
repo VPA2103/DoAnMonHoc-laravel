@@ -17,7 +17,7 @@ class DanhMuc extends Model
 
     public function congThucs()
     {
-        return $this->hasMany(CongThuc::class, 'ma_danh_muc');
+        return $this->hasMany(CongThuc::class, 'ma_danh_muc', 'ma_danh_muc');
     }
 }
 
