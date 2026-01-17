@@ -69,3 +69,5 @@ Route::delete('/lien-he/{id}', [LienHeController::class, 'xoaLienHe']);
 //gui otp
 Route::post('/send-otp', [PasswordOtpController::class, 'sendOtp']);
 Route::post('/reset-password-otp', [PasswordOtpController::class, 'resetPassword']);
+
+//hello
