@@ -9,7 +9,9 @@ class DanhMucController extends Controller
 {
     public function index()
     {
-        return response()->json(DanhMuc::all(), 200);
+        return response()->json([
+            'data' => DanhMuc::all()
+        ], 200);
     }
 
     public function store(Request $request)
