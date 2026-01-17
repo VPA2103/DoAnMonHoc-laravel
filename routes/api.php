@@ -9,6 +9,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PasswordOtpController;
 use App\Http\Controllers\UploadController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\LienHeController;
 
 Route::post('/upload', [UploadController::class, 'upload']);
 
@@ -52,6 +53,10 @@ Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
     Route::delete('/users/{id}', [NguoiDungController::class, 'XoaNguoiDungTheoId']);
 
 });
+
+
+Route::post('/lien-he', [LienHeController::class, 'guiLienHe']);
+
 
 Route::post('/send-otp', [PasswordOtpController::class, 'sendOtp']);
 Route::post('/reset-password-otp', [PasswordOtpController::class, 'resetPassword']);
