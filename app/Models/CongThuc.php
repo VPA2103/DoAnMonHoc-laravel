@@ -16,7 +16,7 @@ class CongThuc extends Model
     public $incrementing = true;
     protected $keyType = 'int';
 
-    // ⚠️ Nếu bảng cong_thuc CÓ created_at, updated_at → đổi thành true
+    // ⚠️ DB không dùng created_at / updated_at
     public $timestamps = false;
 
     protected $fillable = [
@@ -24,10 +24,11 @@ class CongThuc extends Model
         'mo_ta',
         'ma_danh_muc',
         'ma_nguoi_dung',
-        'slug',
         'do_kho',
         'thoi_gian_nau',
-        'trang_thai'
+        'slug',
+        'trang_thai',
+        'anh_cong_thuc',
     ];
 
     /* ================= RELATIONS ================= */
@@ -42,6 +43,16 @@ class CongThuc extends Model
         );
     }
 
+    // Dùng để check công thức có đang được sử dụng không
+    public function chiTietKeHoach()
+    {
+        return $this->hasMany(
+            ChiTietKeHoachBuaAn::class,
+            'ma_cong_thuc',
+            'ma_cong_thuc'
+        );
+    }
+
     // 1 công thức thuộc 1 người dùng
     public function nguoiDung()
     {
@@ -52,7 +63,7 @@ class CongThuc extends Model
         );
     }
 
-    // 🔥 1 công thức có NHIỀU nguyên liệu
+    // 1 công thức có nhiều nguyên liệu
     public function nguyenLieus()
     {
         return $this->hasMany(
@@ -62,6 +73,7 @@ class CongThuc extends Model
         );
     }
 
+    // Các bước nấu
     public function buocNaus()
     {
         return $this->hasMany(
@@ -71,13 +83,16 @@ class CongThuc extends Model
         );
     }
 
+    // Bình luận (chỉ lấy bình luận đang hiển thị)
     public function binhLuans()
     {
         return $this->hasMany(
             BinhLuan::class,
             'ma_cong_thuc',
             'ma_cong_thuc'
-        );
+        )
+        ->where('trang_thai', 1)
+        ->orderByDesc('created_at');
     }
 
     public function danhGias()
