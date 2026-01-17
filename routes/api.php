@@ -10,6 +10,7 @@ use App\Http\Controllers\PasswordOtpController;
 use App\Http\Controllers\UploadController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\LienHeController;
+use App\Http\Controllers\Api\BinhLuanController;
 
 Route::post('/upload', [UploadController::class, 'upload']);
 
@@ -25,6 +26,11 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::middleware(['auth:api', 'vai_tro:user'])->group(function () {
     Route::get('/profile', [NguoiDungController::class, 'GetNguoiDungID']);
     Route::post('/profile/edit', [NguoiDungController::class, 'updateProfile']);
+
+    
+    Route::get('/binh-luan/cua-toi', [BinhLuanController::class, 'danhSachBinhLuanCuaToi']);
+    // Route::post('/binh-luan', [BinhLuanController::class, 'themBinhLuan']);
+    Route::delete('/binh-luan/{id}', [BinhLuanController::class, 'xoaBinhLuan']);
 
     Route::post('/user/ke-hoach-bua-an', [KeHoachBuaAnController::class, 'store']);
 
@@ -54,9 +60,12 @@ Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
 
 });
 
-
+// danh sách liên hệ
 Route::post('/lien-he', [LienHeController::class, 'guiLienHe']);
+Route::get('/lien-he', [LienHeController::class, 'danhSachLienHe']);
+Route::delete('/lien-he/{id}', [LienHeController::class, 'xoaLienHe']);
 
 
+//gui otp
 Route::post('/send-otp', [PasswordOtpController::class, 'sendOtp']);
 Route::post('/reset-password-otp', [PasswordOtpController::class, 'resetPassword']);

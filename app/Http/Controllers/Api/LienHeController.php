@@ -30,5 +30,37 @@ class LienHeController extends Controller
             'message' => 'Gửi liên hệ thành công'
         ], 201);
     }
+    
+     public function danhSachLienHe(Request $request)
+    {
+        $query = LienHe::query();
+
+        // lọc theo trạng thái (nếu có)
+        if ($request->has('trang_thai')) {
+            $query->where('trang_thai', $request->trang_thai);
+        }
+
+        // sắp xếp mới nhất lên đầu
+        $lienHe = $query->orderBy('ngay_gui', 'desc')->paginate(10);
+
+        return response()->json($lienHe, 200);
+    }
+
+    public function xoaLienHe($id)
+    {
+        $lienHe = LienHe::find($id);
+
+        if (!$lienHe) {
+            return response()->json([
+                'message' => 'Liên hệ không tồn tại'
+            ], 404);
+        }
+
+        $lienHe->delete();
+
+        return response()->json([
+            'message' => 'Xóa liên hệ thành công'
+        ], 200);
+    }
 
 }

@@ -11,9 +11,8 @@ class CongThuc extends Model
 
     protected $table = 'cong_thuc';
 
-    protected $primaryKey = 'ma_cong_thuc';
-
-    public $timestamps = false;
+    protected $primaryKey = 'ma_cong_thuc'; // ✅ BẮT BUỘC
+    public $timestamps = false;              // ✅ vì DB dùng ngay_tao
 
     protected $fillable = [
         'ten_cong_thuc',
@@ -31,6 +30,7 @@ class CongThuc extends Model
     {
         return $this->belongsTo(DanhMuc::class, 'ma_danh_muc', 'ma_danh_muc');
     }
+
     public function chiTietKeHoach()
     {
         return $this->hasMany(
@@ -39,6 +39,7 @@ class CongThuc extends Model
             'ma_cong_thuc'
         );
     }
+
     public function nguoiDung()
     {
         return $this->belongsTo(NguoiDung::class, 'ma_nguoi_dung');
@@ -56,7 +57,9 @@ class CongThuc extends Model
 
     public function binhLuans()
     {
-        return $this->hasMany(BinhLuan::class, 'ma_cong_thuc');
+        return $this->hasMany(BinhLuan::class, 'ma_cong_thuc')
+            ->where('trang_thai', 1)
+            ->orderByDesc('created_at');
     }
 
     public function danhGias()
@@ -69,4 +72,3 @@ class CongThuc extends Model
         return $this->hasMany(YeuThich::class, 'ma_cong_thuc');
     }
 }
-
