@@ -5,9 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    /**
-     * Run the migrations.
-     */
+
     public function up(): void
     {
         Schema::create('cong_thuc', function (Blueprint $table) {
@@ -20,7 +18,7 @@ return new class extends Migration {
                 ->on('nguoi_dung')
                 ->cascadeOnDelete();
 
-            // FK -> danh_muc (SỬA Ở ĐÂY)
+            // FK -> danh_muc
             $table->unsignedBigInteger('ma_danh_muc');
             $table->foreign('ma_danh_muc')
                 ->references('ma_danh_muc')
@@ -28,6 +26,10 @@ return new class extends Migration {
 
             $table->string('ten_cong_thuc');
             $table->string('slug')->unique();
+
+            // ✅ ẢNH CÔNG THỨC (1 ẢNH LỚN)
+            $table->string('anh_cong_thuc')->nullable();
+
             $table->text('mo_ta')->nullable();
             $table->enum('do_kho', ['De', 'Trung binh', 'Kho'])->nullable();
             $table->integer('thoi_gian_nau')->nullable();
@@ -36,9 +38,6 @@ return new class extends Migration {
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('cong_thuc');

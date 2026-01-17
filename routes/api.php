@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\Api\AdminController;
+use App\Http\Controllers\Api\CongThucController;
 use App\Http\Controllers\Api\DanhMucController;
+use App\Http\Controllers\Api\KeHoachBuaAnController;
 use App\Http\Controllers\Api\NguoiDungController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PasswordOtpController;
@@ -23,6 +25,17 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::middleware(['auth:api', 'vai_tro:user'])->group(function () {
     Route::get('/profile', [NguoiDungController::class, 'GetNguoiDungID']);
     Route::post('/profile/edit', [NguoiDungController::class, 'updateProfile']);
+
+    Route::post('/user/ke-hoach-bua-an', [KeHoachBuaAnController::class, 'store']);
+
+    Route::get('/user/cong-thuc', [CongThucController::class, 'index']);
+    Route::put('/user/cong-thuc/{id}', [CongThucController::class, 'update']);
+    Route::delete('/user/cong-thuc/{id}', [CongThucController::class, 'destroy']);
+    Route::post('/user/cong-thuc', [CongThucController::class, 'store']);
+    Route::get('/user/cong-thuc/{id}', [CongThucController::class, 'show']);
+
+    Route::get('/user/danh-muc', [DanhMucController::class, 'index']);
+
 });
 
 Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {

@@ -11,18 +11,34 @@ class CongThuc extends Model
 
     protected $table = 'cong_thuc';
 
+    protected $primaryKey = 'ma_cong_thuc';
+
+    public $timestamps = false;
+
     protected $fillable = [
         'ten_cong_thuc',
         'mo_ta',
         'ma_danh_muc',
         'ma_nguoi_dung',
+        'do_kho',
+        'thoi_gian_nau',
+        'slug',
+        'trang_thai',
+        'anh_cong_thuc'
     ];
 
     public function danhMuc()
     {
-        return $this->belongsTo(DanhMuc::class, 'ma_danh_muc');
+        return $this->belongsTo(DanhMuc::class, 'ma_danh_muc', 'ma_danh_muc');
     }
-
+    public function chiTietKeHoach()
+    {
+        return $this->hasMany(
+            ChiTietKeHoachBuaAn::class,
+            'ma_cong_thuc',
+            'ma_cong_thuc'
+        );
+    }
     public function nguoiDung()
     {
         return $this->belongsTo(NguoiDung::class, 'ma_nguoi_dung');
