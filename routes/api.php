@@ -32,8 +32,6 @@ Route::middleware(['auth:api', 'vai_tro:user'])->group(function () {
     // Route::post('/binh-luan', [BinhLuanController::class, 'themBinhLuan']);
     Route::delete('/binh-luan/{id}', [BinhLuanController::class, 'xoaBinhLuan']);
 
-    Route::post('/user/ke-hoach-bua-an', [KeHoachBuaAnController::class, 'store']);
-
     Route::get('/user/cong-thuc', [CongThucController::class, 'index']);
     Route::put('/user/cong-thuc/{id}', [CongThucController::class, 'update']);
     Route::delete('/user/cong-thuc/{id}', [CongThucController::class, 'destroy']);
@@ -42,6 +40,11 @@ Route::middleware(['auth:api', 'vai_tro:user'])->group(function () {
 
     Route::get('/user/danh-muc', [DanhMucController::class, 'index']);
 
+    Route::get('/user/ke-hoach', [KeHoachBuaAnController::class, 'index']);
+    Route::get('/user/ke-hoach/{id}', [KeHoachBuaAnController::class, 'show']);
+    Route::post('/user/ke-hoach', [KeHoachBuaAnController::class, 'store']);
+    Route::put('/user/ke-hoach/{id}', [KeHoachBuaAnController::class, 'update']);
+    Route::delete('/user/ke-hoach/{id}', [KeHoachBuaAnController::class, 'destroy']);
 });
 
 Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
@@ -57,6 +60,8 @@ Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
     Route::post('/users', [NguoiDungController::class, 'TaoNguoiDung']);
     Route::post('/users/{id}', [NguoiDungController::class, 'CapNhapNguoiDungTheoId']);
     Route::delete('/users/{id}', [NguoiDungController::class, 'XoaNguoiDungTheoId']);
+
+    
 
 });
 
