@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->string('ten_nguyen_lieu');
             $table->string('don_vi_tinh')->nullable();
             $table->decimal('so_luong', 10, 2)->nullable();
+            $table->timestamps();
         });
     }
 
