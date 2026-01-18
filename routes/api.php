@@ -46,12 +46,9 @@ Route::put('/cong-thuc/{id}', [CongThucController::class, 'update']);
 Route::delete('/cong-thuc/{id}', [CongThucController::class, 'destroy']);
 
 
-
-
-
-Route::middleware(['auth:api', 'vai_tro:user'])->group(function () {
+Route::middleware(['auth:api'])->group(function () {
     Route::get('/profile', [NguoiDungController::class, 'GetNguoiDungID']);
-    Route::post('/profile/edit', [NguoiDungController::class, 'updateProfile']);
+    Route::post('/profile/edit', [AuthController::class, 'updateProfile']);
 
     
     Route::get('/binh-luan/cua-toi', [BinhLuanController::class, 'danhSachBinhLuanCuaToi']);
