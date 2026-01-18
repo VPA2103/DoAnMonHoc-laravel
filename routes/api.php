@@ -29,21 +29,8 @@ Route::post('/cong-thuc', [CongThucController::class, 'store']);
 Route::put('/cong-thuc/{id}', [CongThucController::class, 'update']);
 Route::delete('/cong-thuc/{id}', [CongThucController::class, 'destroy']);
 
-//Route::resource('nguyen-lieu', ...): Một dòng này tương đương với việc bạn viết 5 dòng get, post, put, delete thủ công. Nó sẽ tự tạo ra các đường dẫn:
-Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
 
-    // ===== NGUYÊN LIỆU =====
-    Route::get('/nguyen-lieu', [NguyenLieuController::class, 'index']);
-    Route::get('/nguyen-lieu/{id}', [NguyenLieuController::class, 'show']);
-    Route::post('/nguyen-lieu', [NguyenLieuController::class, 'store']);
-    Route::put('/nguyen-lieu/{id}', [NguyenLieuController::class, 'update']);
-    Route::delete('/nguyen-lieu/{id}', [NguyenLieuController::class, 'destroy']);
-
-});
-Route::get('/nguyen-lieu', [NguyenLieuController::class, 'index']);
-
-
-Route::middleware(['auth:api', 'vai_tro:user'])->group(function () {
+Route::middleware(['auth:api'])->group(function () {
     Route::get('/profile', [NguoiDungController::class, 'GetNguoiDungID']);
     Route::post('/profile/edit', [NguoiDungController::class, 'updateProfile']);
 
@@ -77,6 +64,12 @@ Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
     Route::post('/users', [NguoiDungController::class, 'TaoNguoiDung']);
     Route::post('/users/{id}', [NguoiDungController::class, 'CapNhapNguoiDungTheoId']);
     Route::delete('/users/{id}', [NguoiDungController::class, 'XoaNguoiDungTheoId']);
+
+    Route::get('/nguyen-lieu', [NguyenLieuController::class, 'index']);
+    Route::get('/nguyen-lieu/{id}', [NguyenLieuController::class, 'show']);
+    Route::post('/nguyen-lieu', [NguyenLieuController::class, 'store']);
+    Route::put('/nguyen-lieu/{id}', [NguyenLieuController::class, 'update']);
+    Route::delete('/nguyen-lieu/{id}', [NguyenLieuController::class, 'destroy']);
 
 });
 
