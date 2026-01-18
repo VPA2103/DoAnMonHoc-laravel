@@ -11,14 +11,12 @@ use Illuminate\Support\Facades\DB;
 class KeHoachBuaAnController extends Controller
 {
     // 📌 LẤY DANH SÁCH
+    // 📌 LẤY DANH SÁCH (PUBLIC)
     public function index()
     {
-        $userId = auth('api')->id();
-
         $keHoachs = KeHoachBuaAn::with([
             'chiTiet.congThuc:ma_cong_thuc,ten_cong_thuc,anh_cong_thuc'
         ])
-            ->where('ma_nguoi_dung', $userId)
             ->orderBy('ngay', 'desc')
             ->get();
 
@@ -27,14 +25,15 @@ class KeHoachBuaAnController extends Controller
         ], 200);
     }
 
+
     // 📌 LẤY THEO ID
+    // 📌 LẤY THEO ID (PUBLIC)
     public function show($id)
     {
         $keHoach = KeHoachBuaAn::with([
             'chiTiet.congThuc:ma_cong_thuc,ten_cong_thuc,anh_cong_thuc'
         ])
             ->where('ma_ke_hoach', $id)
-            ->where('ma_nguoi_dung', auth('api')->id())
             ->first();
 
         if (!$keHoach) {
@@ -47,6 +46,7 @@ class KeHoachBuaAnController extends Controller
             'data' => $keHoach
         ], 200);
     }
+
 
     // ➕ THÊM KẾ HOẠCH
     public function store(Request $request)

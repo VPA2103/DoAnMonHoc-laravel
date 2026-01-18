@@ -14,7 +14,7 @@ class NguyenLieu extends Model
     protected $keyType = 'int';
 
     // ✅ BẬT timestamps để tự ghi created_at / updated_at
-    public $timestamps = true;
+    public $timestamps = false;
 
     // ✅ Cho phép create / update
     protected $fillable = [
