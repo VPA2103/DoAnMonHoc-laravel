@@ -58,12 +58,16 @@ Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
     Route::post('/users/{id}', [NguoiDungController::class, 'CapNhapNguoiDungTheoId']);
     Route::delete('/users/{id}', [NguoiDungController::class, 'XoaNguoiDungTheoId']);
 
+    // quan ly lien he
+    Route::get('/lien-he', [LienHeController::class, 'danhSachLienHe']);
+    Route::delete('/lien-he/{id}', [LienHeController::class, 'xoaLienHe']);
+
+
+
 });
 
 // danh sách liên hệ
 Route::post('/lien-he', [LienHeController::class, 'guiLienHe']);
-Route::get('/lien-he', [LienHeController::class, 'danhSachLienHe']);
-Route::delete('/lien-he/{id}', [LienHeController::class, 'xoaLienHe']);
 
 
 //gui otp

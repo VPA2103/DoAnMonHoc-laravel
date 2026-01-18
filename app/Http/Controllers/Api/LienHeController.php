@@ -48,7 +48,8 @@ class LienHeController extends Controller
 
     public function xoaLienHe($id)
     {
-        $lienHe = LienHe::find($id);
+        // Nếu khóa chính trong DB là ma_lien_he
+        $lienHe = LienHe::where('ma_lien_he', $id)->first();
 
         if (!$lienHe) {
             return response()->json([
