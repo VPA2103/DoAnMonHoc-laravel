@@ -20,7 +20,6 @@ return new class extends Migration {
                 ->cascadeOnDelete();
 
             $table->date('ngay');
-            $table->string('ten_bua_an'); // sáng / trưa / tối
             $table->text('ghi_chu')->nullable();
 
             $table->timestamps();
