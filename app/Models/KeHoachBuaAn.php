@@ -2,25 +2,25 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class KeHoachBuaAn extends Model
 {
-    use HasFactory;
-
     protected $table = 'ke_hoach_bua_an';
+    protected $primaryKey = 'ma_ke_hoach';
 
-    protected $fillable = ['ten_ke_hoach', 'ma_nguoi_dung'];
+    protected $fillable = [
+        'ma_nguoi_dung',
+        'ngay',
+        'ghi_chu'
+    ];
 
-    public function nguoiDung()
+    public function chiTiet()
     {
-        return $this->belongsTo(NguoiDung::class, 'ma_nguoi_dung');
-    }
-
-    public function chiTiets()
-    {
-        return $this->hasMany(ChiTietKeHoachBuaAn::class, 'ma_ke_hoach');
+        return $this->hasMany(
+            ChiTietKeHoachBuaAn::class,
+            'ma_ke_hoach',
+            'ma_ke_hoach'
+        );
     }
 }
-
