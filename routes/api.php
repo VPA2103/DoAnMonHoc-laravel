@@ -77,15 +77,19 @@ Route::middleware(['auth:api', 'vai_tro:user'])->group(function () {
 });
 
 Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
-
-
-    Route::get('/admin', [AdminController::class, 'GetNguoiDungID']);
+    Route::get('/admin/profile', [AdminController::class, 'GetNguoiDungID']);
+    Route::post('/admin/profile', [AdminController::class, 'updateAdminProfile']);
+    Route::get('/admin/users', [AdminController::class, 'getUserList']);
 
 
     Route::get('/admin/danh-muc', [DanhMucController::class, 'index']);
     Route::post('/admin/danh-muc', [DanhMucController::class, 'store']);
     Route::put('/admin/danh-muc/{id}', [DanhMucController::class, 'update']);
     Route::delete('/admin/danh-muc/{id}', [DanhMucController::class, 'destroy']);
+
+    Route::get('/admin/cong-thuc', [AdminController::class, 'layTatCaCongThuc']);
+    Route::put('/admin/cong-thuc/{id}', [AdminController::class, 'updateTrangThai']);
+
 
 
     Route::get('/users', [NguoiDungController::class, 'HienThiDSNguoiDung']);
@@ -101,4 +105,3 @@ Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
     Route::delete('/nguyen-lieu/{id}', [NguyenLieuController::class, 'destroy']);
 
 });
-
