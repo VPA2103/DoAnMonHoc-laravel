@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
@@ -9,7 +10,10 @@ use Illuminate\Support\Facades\Storage;
 
 class CongThucController extends Controller
 {
-
+    /**
+     * GET /api/cong-thuc
+     * Lấy danh sách công thức (full – admin)
+     */
     public function index()
     {
         $congThucs = CongThuc::with([
@@ -21,6 +25,24 @@ class CongThucController extends Controller
         return response()->json([
             'data' => $congThucs
         ]);
+    }
+
+    /**
+     * GET /api/cong-thuc/dropdown
+     * Lấy danh sách công thức cho dropdown
+     */
+    public function dropdown()
+    {
+        $data = CongThuc::query()
+            ->select('ma_cong_thuc', 'ten_cong_thuc')
+            ->where('trang_thai', 1)
+            ->orderBy('ten_cong_thuc')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ], 200);
     }
 
     public function show($id)
@@ -39,7 +61,6 @@ class CongThucController extends Controller
     }
 
     // ➕ THÊM CÔNG THỨC
-
     public function store(Request $request)
     {
         $request->validate([
@@ -60,10 +81,9 @@ class CongThucController extends Controller
         $data['ma_nguoi_dung'] = auth()->id();
         $data['slug'] = Str::slug($request->ten_cong_thuc);
 
-        // ✅ XỬ LÝ ẢNH ĐÚNG
         if ($request->hasFile('anh_cong_thuc')) {
             $path = $request->file('anh_cong_thuc')->store('cong-thuc', 'public');
-            $data['anh_cong_thuc'] = $path; // cong-thuc/abc.jpg
+            $data['anh_cong_thuc'] = $path;
         }
 
         CongThuc::create($data);
@@ -72,8 +92,6 @@ class CongThucController extends Controller
             'message' => 'Thêm công thức thành công'
         ], 201);
     }
-
-
 
     public function update(Request $request, $id)
     {
@@ -90,10 +108,7 @@ class CongThucController extends Controller
 
         $validated['slug'] = Str::slug($validated['ten_cong_thuc']);
 
-        // ✅ NẾU CÓ ẢNH MỚI → LƯU ẢNH MỚI
         if ($request->hasFile('anh_cong_thuc')) {
-
-            // ❌ XÓA ẢNH CŨ (nếu có)
             if ($congThuc->anh_cong_thuc) {
                 Storage::disk('public')->delete($congThuc->anh_cong_thuc);
             }
@@ -101,8 +116,6 @@ class CongThucController extends Controller
             $path = $request->file('anh_cong_thuc')->store('cong-thuc', 'public');
             $validated['anh_cong_thuc'] = $path;
         }
-
-        // ❗ KHÔNG có ảnh mới → KHÔNG động vào anh_cong_thuc
 
         $congThuc->update($validated);
 
@@ -112,14 +125,11 @@ class CongThucController extends Controller
         ]);
     }
 
-
-
     // 🗑️ XÓA CÔNG THỨC
     public function destroy($id)
     {
         $congThuc = CongThuc::findOrFail($id);
 
-        // ✅ CHỈ CHO XÓA CÔNG THỨC CỦA CHÍNH USER
         if ($congThuc->ma_nguoi_dung !== auth()->id()) {
             return response()->json([
                 'message' => 'Bạn không có quyền xóa công thức này'
@@ -139,7 +149,6 @@ class CongThucController extends Controller
         ]);
     }
 
-
     public function updateTrangThai(Request $request, $id)
     {
         $request->validate([
@@ -151,6 +160,8 @@ class CongThucController extends Controller
             'trang_thai' => $request->trang_thai
         ]);
 
-        return response()->json(['message' => 'Cập nhật trạng thái thành công']);
+        return response()->json([
+            'message' => 'Cập nhật trạng thái thành công'
+        ]);
     }
 }
