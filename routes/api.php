@@ -38,12 +38,16 @@ Route::get('/ke-hoach', [KeHoachBuaAnController::class, 'LayDanhSachKeHoachTrang
 Route::get('/ke-hoach/{id}', [KeHoachBuaAnController::class, 'LayKeHoachTrangChuId']);
 
 //congthuc
-
 Route::get('/cong-thuc', [CongThucController::class, 'index']);
 Route::get('/cong-thuc/{id}', [CongThucController::class, 'show']);
 Route::post('/cong-thuc', [CongThucController::class, 'store']);
 Route::put('/cong-thuc/{id}', [CongThucController::class, 'update']);
 Route::delete('/cong-thuc/{id}', [CongThucController::class, 'destroy']);
+
+// ===== PUBLIC API (KHÔNG CẦN LOGIN) =====
+Route::get('/cong-thucc', [CongThucController::class, 'danhSachCongThuc']);
+Route::get('/cong-thucc/{id}', [CongThucController::class, 'chiTietCongThuc']); 
+
 
 
 Route::middleware(['auth:api'])->group(function () {
@@ -102,5 +106,6 @@ Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
     Route::post('/nguyen-lieu', [NguyenLieuController::class, 'store']);
     Route::put('/nguyen-lieu/{id}', [NguyenLieuController::class, 'update']);
     Route::delete('/nguyen-lieu/{id}', [NguyenLieuController::class, 'destroy']);
+
 
 });
