@@ -34,8 +34,8 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 
 // ke hoach
-Route::get('/ke-hoach', [KeHoachBuaAnController::class, 'index']);
-Route::get('/ke-hoach/{id}', [KeHoachBuaAnController::class, 'show']);
+Route::get('/ke-hoach', [KeHoachBuaAnController::class, 'LayDanhSachKeHoachTrangChu']);
+Route::get('/ke-hoach/{id}', [KeHoachBuaAnController::class, 'LayKeHoachTrangChuId']);
 
 //congthuc
 
@@ -66,6 +66,8 @@ Route::middleware(['auth:api'])->group(function () {
 
 
     //kehoach
+    Route::get('/user/ke-hoach', [KeHoachBuaAnController::class, 'index']);
+    Route::get('/user/ke-hoach/{id}', [KeHoachBuaAnController::class, 'show']);
     Route::post('/user/ke-hoach', [KeHoachBuaAnController::class, 'store']);
     Route::put('/user/ke-hoach/{id}', [KeHoachBuaAnController::class, 'update']);
     Route::delete('/user/ke-hoach/{id}', [KeHoachBuaAnController::class, 'destroy']);
