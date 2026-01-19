@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\CongThuc;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
@@ -16,15 +17,18 @@ class CongThucController extends Controller
      */
     public function index()
     {
+        $maNguoiDung = Auth::id(); // == auth()->user()->ma_nguoi_dung
+
         $congThucs = CongThuc::with([
             'danhMuc:ma_danh_muc,ten_danh_muc'
         ])
-            ->orderBy('ma_cong_thuc', 'desc')
+            ->where('ma_nguoi_dung', $maNguoiDung)
+            ->orderByDesc('ma_cong_thuc')
             ->get();
 
         return response()->json([
             'data' => $congThucs
-        ]);
+        ], 200);
     }
 
     /**
@@ -47,11 +51,20 @@ class CongThucController extends Controller
 
     public function show($id)
     {
-        $congThuc = CongThuc::find($id);
+        $maNguoiDung = auth()->id();
+
+        $congThuc = CongThuc::with([
+            'danhMuc',
+            'nguyenLieus',
+            'buocNaus'
+        ])
+            ->where('ma_cong_thuc', $id)
+            ->where('ma_nguoi_dung', $maNguoiDung)
+            ->first();
 
         if (!$congThuc) {
             return response()->json([
-                'message' => 'Không tìm thấy công thức'
+                'message' => 'Không tìm thấy công thức hoặc bạn không có quyền'
             ], 404);
         }
 
