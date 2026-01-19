@@ -9,7 +9,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PasswordOtpController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\Api\NguyenLieuController;
-
+use App\Http\Controllers\Api\DanhGiaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\LienHeController;
 use App\Http\Controllers\Api\BinhLuanController;
@@ -19,6 +19,11 @@ Route::post('/upload', [UploadController::class, 'upload']);
 Route::get('/test-cloudinary', function () {
     return config('cloudinary.cloud_url');
 });
+
+// xem đánh giá theo công thức 
+Route::get('/danh-gia/cong-thuc/{id}', [DanhGiaController::class, 'theoCongThuc']);
+Route::get('/danh-gia/thong-ke/{id}', [DanhGiaController::class, 'thongKeTheoCongThuc']); //thong ke danh gia theo cong thuc
+
 // danh sách liên hệ
 Route::post('/lien-he', [LienHeController::class, 'guiLienHe']);
 Route::get('/lien-he', [LienHeController::class, 'danhSachLienHe']);
@@ -70,6 +75,13 @@ Route::middleware(['auth:api'])->group(function () {
     Route::put('/user/ke-hoach/{id}', [KeHoachBuaAnController::class, 'update']);
     Route::delete('/user/ke-hoach/{id}', [KeHoachBuaAnController::class, 'destroy']);
 
+    //danh gia
+    Route::post('/danh-gia', [DanhGiaController::class, 'store']);
+    Route::get('/user/danh-gia',[DanhGiaController::class, 'danhSachDanhGiaCuaToi']); // user quản lý đánh giá của mình
+    Route::put('/danh-gia/{id}', [DanhGiaController::class, 'update']); //cap nhap danh gia
+    Route::delete('/danh-gia/{id}', [DanhGiaController::class, 'destroy']); // xoa danh gia
+
+
 
 });
 
@@ -100,5 +112,8 @@ Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
     Route::post('/nguyen-lieu', [NguyenLieuController::class, 'store']);
     Route::put('/nguyen-lieu/{id}', [NguyenLieuController::class, 'update']);
     Route::delete('/nguyen-lieu/{id}', [NguyenLieuController::class, 'destroy']);
+
+    //danh gia 
+    Route::get('/admin/danh-gia', [DanhGiaController::class, 'index']);
 
 });
