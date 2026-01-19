@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
-
+use Illuminate\Support\Facades\Log;
 class NguoiDung extends Authenticatable implements JWTSubject
 {
     use HasFactory;
@@ -94,4 +94,57 @@ class NguoiDung extends Authenticatable implements JWTSubject
             'vai_tro' => $this->vai_tro
         ];
     }
+
+     public function getAuthPassword()
+    {
+        return $this->mat_khau;
+    }
+
+   public function updateProfile(Request $request)
+{
+    \Log::info('CALL updateProfile', [
+        'auth_user' => auth()->user() ? auth()->user()->ma_nguoi_dung : null,
+        'headers' => $request->headers->all(),
+        'all' => $request->all()
+    ]);
+
+    $user = auth()->user();
+    if (!$user) {
+        return response()->json(['success' => false, 'message' => 'Unauthenticated.'], 401);
+    }
+
+    $validator = \Validator::make($request->all(), [
+        'ten_nguoi_dung' => 'required|string|max:255',
+        'anh_dai_dien'   => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
+
+    if ($validator->fails()) {
+        \Log::info('VALIDATION FAIL', ['errors' => $validator->errors()->toArray()]);
+        return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+    }
+
+    $user->ten_nguoi_dung = $request->ten_nguoi_dung;
+
+    if ($request->hasFile('anh_dai_dien')) {
+        try {
+            $path = $request->file('anh_dai_dien')->store('avatars', 'public');
+            $user->anh_dai_dien = $path;
+        } catch (\Exception $e) {
+            \Log::error('UPLOAD ERROR', ['msg' => $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => 'Upload lỗi'], 500);
+        }
+    }
+
+    try {
+        $user->save();
+    } catch (\Exception $e) {
+        \Log::error('SAVE ERROR', ['msg' => $e->getMessage()]);
+        return response()->json(['success' => false, 'message' => 'Lưu thất bại'], 500);
+    }
+
+    \Log::info('UPDATE OK', ['user' => $user->ma_nguoi_dung]);
+    return response()->json(['success' => true, 'message' => 'Cập nhật thông tin thành công', 'data' => $user]);
+}
+
+
 }
