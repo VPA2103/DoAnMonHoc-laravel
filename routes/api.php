@@ -13,7 +13,7 @@ use App\Http\Controllers\Api\NguyenLieuController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\LienHeController;
 use App\Http\Controllers\Api\BinhLuanController;
-
+use App\Http\Controllers\API\BlogController;
 Route::post('/upload', [UploadController::class, 'upload']);
 
 Route::get('/test-cloudinary', function () {
@@ -76,7 +76,11 @@ Route::middleware(['auth:api'])->group(function () {
     Route::put('/user/ke-hoach/{id}', [KeHoachBuaAnController::class, 'update']);
     Route::delete('/user/ke-hoach/{id}', [KeHoachBuaAnController::class, 'destroy']);
 
-
+     Route::get('blogs', [BlogController::class, 'index']);
+    Route::post('blogs', [BlogController::class, 'store']);
+    Route::get('blogs/{id}', [BlogController::class, 'show']);
+    Route::put('blogs/{id}', [BlogController::class, 'update']);
+    Route::delete('blogs/{id}', [BlogController::class, 'destroy']);
 });
 
 Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
@@ -107,5 +111,5 @@ Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
     Route::put('/nguyen-lieu/{id}', [NguyenLieuController::class, 'update']);
     Route::delete('/nguyen-lieu/{id}', [NguyenLieuController::class, 'destroy']);
 
-
+   
 });
