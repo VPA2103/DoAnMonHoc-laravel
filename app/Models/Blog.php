@@ -23,4 +23,3 @@ class Blog extends Model
         return $this->belongsTo(NguoiDung::class, 'ma_nguoi_dung');
     }
 }
-

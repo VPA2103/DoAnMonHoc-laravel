@@ -11,65 +11,99 @@ class BlogController extends Controller
 {
     public function index()
     {
-        // Lấy danh sách blog mới nhất
         return response()->json(Blog::orderBy('created_at', 'desc')->get());
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'tieu_de' => 'required|string',
-            'noi_dung' => 'required',
-            'hinh_anh' => 'nullable|image|max:2048' // Validate ảnh
-        ]);
-
-        $data = $request->all();
-        $data['slug'] = Str::slug($request->tieu_de); // Tạo slug SEO
-        $data['user_id'] = auth()->id() ?? 1; // Tạm thời lấy ID 1 nếu chưa login
-
-        // Xử lý upload ảnh
-        if ($request->hasFile('hinh_anh')) {
-            $file = $request->file('hinh_anh');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('uploads/blogs'), $filename);
-            $data['hinh_anh'] = 'uploads/blogs/' . $filename;
+        if (!auth()->check()) {
+            return response()->json(['message' => 'Bạn chưa đăng nhập!'], 401);
         }
 
+        $validated = $request->validate([
+            'tieu_de' => 'required|string|max:255',
+            'noi_dung' => 'required|string',
+        ]);
+
+        // Tạo slug cơ bản
+        $baseSlug = Str::slug($request->tieu_de);
+        $slug = $baseSlug;
+        $count = 1;
+
+        // Nếu trùng thì thêm -1, -2,...
+        while (Blog::where('slug', $slug)->exists()) {
+            $slug = $baseSlug . '-' . $count;
+            $count++;
+        }
+
+        $data = $validated;
+        $data['slug'] = $slug;
+        $data['ma_nguoi_dung'] = auth()->id();
+
         $blog = Blog::create($data);
-        return response()->json(['success' => true, 'data' => $blog]);
+
+        return response()->json(['success' => true, 'data' => $blog], 201);
     }
 
     public function show($id)
     {
-        return response()->json(Blog::find($id));
+        $blog = Blog::find($id);
+        if (!$blog) {
+            return response()->json(['message' => 'Không tìm thấy blog'], 404);
+        }
+        return response()->json($blog);
     }
 
     public function update(Request $request, $id)
     {
         $blog = Blog::find($id);
-        if (!$blog) return response()->json(['success' => false, 'message' => 'Không tìm thấy blog'], 404);
-
-        $data = $request->all();
-        if ($request->has('tieu_de')) {
-            $data['slug'] = Str::slug($request->tieu_de);
+        if (!$blog) {
+            return response()->json(['message' => 'Không tìm thấy blog'], 404);
         }
 
-        // Xử lý ảnh mới nếu có
-        if ($request->hasFile('hinh_anh')) {
-            // Xóa ảnh cũ nếu cần (tùy chọn)
-            $file = $request->file('hinh_anh');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('uploads/blogs'), $filename);
-            $data['hinh_anh'] = 'uploads/blogs/' . $filename;
+        if ($blog->ma_nguoi_dung !== auth()->id()) {
+            return response()->json(['message' => 'Không có quyền sửa'], 403);
+        }
+
+        $validated = $request->validate([
+            'tieu_de' => 'required|string|max:255',
+            'noi_dung' => 'required|string',
+        ]);
+
+        $data = $validated;
+
+        if ($request->filled('tieu_de')) {
+            $baseSlug = Str::slug($request->tieu_de);
+            $slug = $baseSlug;
+            $count = 1;
+
+            // Tránh trùng với các bài khác (không tính chính nó)
+            while (Blog::where('slug', $slug)->where('ma_blog', '!=', $id)->exists()) {
+                $slug = $baseSlug . '-' . $count;
+                $count++;
+            }
+
+            $data['slug'] = $slug;
         }
 
         $blog->update($data);
+
         return response()->json(['success' => true, 'data' => $blog]);
     }
 
     public function destroy($id)
     {
-        Blog::destroy($id);
+        $blog = Blog::find($id);
+        if (!$blog) {
+            return response()->json(['message' => 'Không tìm thấy blog'], 404);
+        }
+
+        if ($blog->ma_nguoi_dung !== auth()->id()) {
+            return response()->json(['message' => 'Không có quyền xóa'], 403);
+        }
+
+        $blog->delete();
+
         return response()->json(['success' => true]);
     }
 }
