@@ -55,7 +55,23 @@ class NguoiDung extends Authenticatable implements JWTSubject
     // Theo dõi (người đang theo dõi)
     public function dangTheoDoi()
     {
-        return $this->hasMany(TheoDoi::class, 'ma_nguoi_theo_doi');
+        return $this->belongsToMany(
+            NguoiDung::class,
+            'theo_doi',
+            'ma_nguoi_theo_doi',
+            'ma_nguoi_duoc_theo_doi'
+        );
+    }
+
+    // Những người theo dõi tôi
+    public function nguoiTheoDoi()
+    {
+        return $this->belongsToMany(
+            NguoiDung::class,
+            'theo_doi',
+            'ma_nguoi_duoc_theo_doi',
+            'ma_nguoi_theo_doi'
+        );
     }
 
     // Blog

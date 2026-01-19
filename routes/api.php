@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\NguyenLieuController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\LienHeController;
 use App\Http\Controllers\Api\BinhLuanController;
+use App\Http\Controllers\Api\TheoDoiController;
 
 Route::post('/upload', [UploadController::class, 'upload']);
 
@@ -61,6 +62,9 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('/user/cong-thuc', [CongThucController::class, 'store']);
     Route::get('/user/cong-thuc/{id}', [CongThucController::class, 'show']);
 
+    Route::get('/user/following', [NguoiDungController::class, 'DanhSachNguoiDangTheoDoi']);
+    Route::post('/follow/{id}', [TheoDoiController::class, 'follow']); 
+    Route::delete('/unfollow/{id}', [TheoDoiController::class, 'unfollow']);
 
     Route::get('/user/danh-muc', [DanhMucController::class, 'index']);
 
@@ -71,7 +75,6 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('/user/ke-hoach', [KeHoachBuaAnController::class, 'store']);
     Route::put('/user/ke-hoach/{id}', [KeHoachBuaAnController::class, 'update']);
     Route::delete('/user/ke-hoach/{id}', [KeHoachBuaAnController::class, 'destroy']);
-
 
 });
 
@@ -88,7 +91,6 @@ Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
 
     Route::get('/admin/cong-thuc', [AdminController::class, 'layTatCaCongThuc']);
     Route::put('/admin/cong-thuc/{id}', [AdminController::class, 'updateTrangThai']);
-
 
 
     Route::get('/users', [NguoiDungController::class, 'HienThiDSNguoiDung']);

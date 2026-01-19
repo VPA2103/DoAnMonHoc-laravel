@@ -23,6 +23,8 @@ class NguoiDungController extends Controller
                 'vai_tro' => $user->vai_tro,
                 'trang_thai' => $user->trang_thai,
                 'ngay_tao' => $user->ngay_tao,
+                'followers' => $user->nguoiTheoDoi()->count(),
+                'following' => $user->dangTheoDoi()->count(),
             ]
         ]);
     }
@@ -317,7 +319,23 @@ class NguoiDungController extends Controller
         ]);
     }
 
+    public function DanhSachNguoiDangTheoDoi(Request $request)
+    {
+        $user = $request->user(); // user đang đăng nhập
 
+        $following = $user->dangTheoDoi()
+            ->select(
+                'nguoi_dung.ma_nguoi_dung',
+                'nguoi_dung.ten_nguoi_dung',
+                'nguoi_dung.email',
+                'nguoi_dung.anh_dai_dien',
+                'nguoi_dung.vai_tro'
+            )
+            ->get();
 
-
+        return response()->json([
+            'success' => true,
+            'data' => $following
+        ]);
+    }
 }
