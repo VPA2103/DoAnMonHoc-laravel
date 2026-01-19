@@ -13,9 +13,10 @@ class Blog extends Model
 
     protected $fillable = ['tieu_de', 'noi_dung', 'ma_nguoi_dung'];
 
+    
+
     public function nguoiDung()
     {
         return $this->belongsTo(NguoiDung::class, 'ma_nguoi_dung');
     }
 }
-
