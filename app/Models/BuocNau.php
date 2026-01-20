@@ -10,11 +10,11 @@ class BuocNau extends Model
     use HasFactory;
 
     protected $table = 'buoc_nau';
-
-    protected $fillable = ['noi_dung', 'ma_cong_thuc'];
-
+    protected $primaryKey = 'ma_buoc_nau';
+    protected $fillable = ['ma_cong_thuc', 'so_thu_tu', 'noi_dung', 'hinh_anh'];
+    public $timestamps = false;
     public function congThuc()
     {
-        return $this->belongsTo(CongThuc::class, 'ma_cong_thuc');
+        return $this->belongsTo(CongThuc::class, 'ma_cong_thuc', 'ma_cong_thuc');
     }
 }
