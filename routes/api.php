@@ -126,6 +126,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('blogs', [BlogController::class, 'store']);
     Route::put('blogs/{id}', [BlogController::class, 'update']);
     Route::delete('blogs/{id}', [BlogController::class, 'destroy']);
+    Route::put('/blogs/{id}/trang-thai', [BlogController::class, 'updateTrangThai']);
 });
 
 Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
