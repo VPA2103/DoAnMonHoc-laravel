@@ -15,6 +15,7 @@ class Blog extends Model
         'tieu_de', 
         'slug',          
         'noi_dung', 
+        'hinh_anh',
         'ma_nguoi_dung',
         'trang_thai'     
     ];

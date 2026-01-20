@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-
+use Illuminate\Support\Facades\Storage;
 class BlogController extends Controller
 {
     public function index()
@@ -23,6 +23,7 @@ class BlogController extends Controller
         $validated = $request->validate([
             'tieu_de' => 'required|string|max:255',
             'noi_dung' => 'required|string',
+            'hinh_anh' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
 
         // Tạo slug cơ bản
@@ -39,7 +40,13 @@ class BlogController extends Controller
         $data = $validated;
         $data['slug'] = $slug;
         $data['ma_nguoi_dung'] = auth()->id();
-
+            //  XỬ LÝ LƯU ẢNH 
+        if ($request->hasFile('hinh_anh')) {
+            // Lưu vào storage/app/public/blogs
+            // Hàm store sẽ trả về đường dẫn ví dụ: "blogs/abcxyz.jpg"
+            $path = $request->file('hinh_anh')->store('blogs', 'public');
+            $data['hinh_anh'] = $path;
+        }
         $blog = Blog::create($data);
 
         return response()->json(['success' => true, 'data' => $blog], 201);
@@ -68,6 +75,7 @@ class BlogController extends Controller
         $validated = $request->validate([
             'tieu_de' => 'required|string|max:255',
             'noi_dung' => 'required|string',
+            'hinh_anh' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
 
         $data = $validated;
@@ -85,7 +93,19 @@ class BlogController extends Controller
 
             $data['slug'] = $slug;
         }
+        // XỬ LÝ CẬP NHẬT ẢNH (QUAN TRỌNG)
+        if ($request->hasFile('hinh_anh')) {
+            // Bước A: Xóa ảnh cũ đi cho đỡ rác (nếu có)
+            if ($blog->hinh_anh && Storage::disk('public')->exists($blog->hinh_anh)) {
+                Storage::disk('public')->delete($blog->hinh_anh);
+            }
 
+            // Lưu ảnh mới
+            $path = $request->file('hinh_anh')->store('blogs', 'public');
+            $data['hinh_anh'] = $path;
+        }
+
+        // Nếu không gửi ảnh mới, Laravel sẽ tự giữ nguyên ảnh cũ vì $data chỉ chứa field được validate
         $blog->update($data);
 
         return response()->json(['success' => true, 'data' => $blog]);
@@ -102,6 +122,10 @@ class BlogController extends Controller
             return response()->json(['message' => 'Không có quyền xóa'], 403);
         }
 
+        // Xóa luôn ảnh trong storage khi xóa bài viết
+        if ($blog->hinh_anh && Storage::disk('public')->exists($blog->hinh_anh)) {
+            Storage::disk('public')->delete($blog->hinh_anh);
+        }
         $blog->delete();
 
         return response()->json(['success' => true]);
