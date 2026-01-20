@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\DanhGiaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\LienHeController;
 use App\Http\Controllers\Api\BinhLuanController;
+use App\Http\Controllers\Api\BlogController;
 use App\Http\Controllers\Api\FeedController;
 use App\Http\Controllers\Api\TheoDoiController;
 
@@ -56,11 +57,19 @@ Route::delete('/cong-thuc/{id}', [CongThucController::class, 'destroy']);
 Route::get('/cong-thucc', [CongThucController::class, 'danhSachCongThuc']);
 Route::get('/cong-thucc/{id}', [CongThucController::class, 'chiTietCongThuc']); 
 
+Route::prefix('blogs')->group(function () {
+    // Public: ai cũng xem được danh sách và chi tiết blog
+    Route::get('/', [BlogController::class, 'index']);
+    Route::get('/{id}', [BlogController::class, 'show']);
 
-//binh luan theo chi tiet cong thuc
-Route::get('/binh-luan/cong-thuc/{id}', [BinhLuanController::class, 'danhSachTheoCongThuc']);
+ 
+});
 
-
+//binh luan
+Route::get(
+    '/binh-luan/cong-thuc/{id}',
+    [BinhLuanController::class, 'danhSachTheoCongThuc']
+);
 
 Route::middleware(['auth:api'])->group(function () {
     Route::get('/profile', [NguoiDungController::class, 'GetNguoiDungID']);
@@ -110,6 +119,9 @@ Route::middleware(['auth:api'])->group(function () {
 
 
 
+    Route::post('blogs', [BlogController::class, 'store']);
+    Route::put('blogs/{id}', [BlogController::class, 'update']);
+    Route::delete('blogs/{id}', [BlogController::class, 'destroy']);
 });
 
 Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
@@ -143,3 +155,5 @@ Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
     Route::get('/admin/danh-gia', [DanhGiaController::class, 'index']);
 
 });
+
+
