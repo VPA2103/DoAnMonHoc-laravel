@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\NguyenLieuController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\LienHeController;
 use App\Http\Controllers\Api\BinhLuanController;
+use App\Http\Controllers\Api\BlogController;
 use App\Http\Controllers\Api\FeedController;
 use App\Http\Controllers\Api\TheoDoiController;
 
@@ -50,7 +51,13 @@ Route::delete('/cong-thuc/{id}', [CongThucController::class, 'destroy']);
 Route::get('/cong-thucc', [CongThucController::class, 'danhSachCongThuc']);
 Route::get('/cong-thucc/{id}', [CongThucController::class, 'chiTietCongThuc']); 
 
+Route::prefix('blogs')->group(function () {
+    // Public: ai cũng xem được danh sách và chi tiết blog
+    Route::get('/', [BlogController::class, 'index']);
+    Route::get('/{id}', [BlogController::class, 'show']);
 
+ 
+});
 
 Route::middleware(['auth:api'])->group(function () {
     Route::get('/profile', [NguoiDungController::class, 'GetNguoiDungID']);
@@ -84,6 +91,9 @@ Route::middleware(['auth:api'])->group(function () {
     Route::put('/user/ke-hoach/{id}', [KeHoachBuaAnController::class, 'update']);
     Route::delete('/user/ke-hoach/{id}', [KeHoachBuaAnController::class, 'destroy']);
 
+    Route::post('blogs', [BlogController::class, 'store']);
+    Route::put('blogs/{id}', [BlogController::class, 'update']);
+    Route::delete('blogs/{id}', [BlogController::class, 'destroy']);
 });
 
 Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
@@ -112,5 +122,6 @@ Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
     Route::post('/nguyen-lieu', [NguyenLieuController::class, 'store']);
     Route::put('/nguyen-lieu/{id}', [NguyenLieuController::class, 'update']);
     Route::delete('/nguyen-lieu/{id}', [NguyenLieuController::class, 'destroy']);
+
 
 });
