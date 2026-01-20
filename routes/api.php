@@ -13,7 +13,10 @@ use App\Http\Controllers\Api\DanhGiaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\LienHeController;
 use App\Http\Controllers\Api\BinhLuanController;
+use App\Http\Controllers\Api\FeedController;
+use App\Http\Controllers\Api\TheoDoiController;
 
+use App\Http\Controllers\Api\YeuThichController;
 Route::post('/upload', [UploadController::class, 'upload']);
 
 Route::get('/test-cloudinary', function () {
@@ -39,38 +42,57 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 
 // ke hoach
-Route::get('/ke-hoach', [KeHoachBuaAnController::class, 'index']);
-Route::get('/ke-hoach/{id}', [KeHoachBuaAnController::class, 'show']);
+Route::get('/ke-hoach', [KeHoachBuaAnController::class, 'LayDanhSachKeHoachTrangChu']);
+Route::get('/ke-hoach/{id}', [KeHoachBuaAnController::class, 'LayKeHoachTrangChuId']);
 
 //congthuc
-
 Route::get('/cong-thuc', [CongThucController::class, 'index']);
 Route::get('/cong-thuc/{id}', [CongThucController::class, 'show']);
 Route::post('/cong-thuc', [CongThucController::class, 'store']);
 Route::put('/cong-thuc/{id}', [CongThucController::class, 'update']);
 Route::delete('/cong-thuc/{id}', [CongThucController::class, 'destroy']);
 
+// ===== PUBLIC API (KHÔNG CẦN LOGIN) =====
+Route::get('/cong-thucc', [CongThucController::class, 'danhSachCongThuc']);
+Route::get('/cong-thucc/{id}', [CongThucController::class, 'chiTietCongThuc']); 
+
+
+//binh luan theo chi tiet cong thuc
+Route::get('/binh-luan/cong-thuc/{id}', [BinhLuanController::class, 'danhSachTheoCongThuc']);
+
+
 
 Route::middleware(['auth:api'])->group(function () {
     Route::get('/profile', [NguoiDungController::class, 'GetNguoiDungID']);
     Route::post('/profile/edit', [AuthController::class, 'updateProfile']);
 
-    
-    Route::get('/binh-luan/cua-toi', [BinhLuanController::class, 'danhSachBinhLuanCuaToi']);
-    Route::delete('/binh-luan/{id}', [BinhLuanController::class, 'xoaBinhLuan']);
+    //binh luan
+    Route::get('/user/binh-luan/toi', [BinhLuanController::class, 'danhSachBinhLuanCuaToi']);
+    Route::post('/user/binh-luan', [BinhLuanController::class, 'themBinhLuan']);
+    Route::put('/user/binh-luan/{id}', [BinhLuanController::class, 'suaBinhLuan']);
+    Route::delete('/user/binh-luan/{id}', [BinhLuanController::class, 'xoaBinhLuan']);
 
 
+    //cong thuc
     Route::get('/user/cong-thuc', [CongThucController::class, 'index']);
     Route::put('/user/cong-thuc/{id}', [CongThucController::class, 'update']);
     Route::delete('/user/cong-thuc/{id}', [CongThucController::class, 'destroy']);
     Route::post('/user/cong-thuc', [CongThucController::class, 'store']);
     Route::get('/user/cong-thuc/{id}', [CongThucController::class, 'show']);
 
+    //theo doi
+    Route::get('/user/following', [NguoiDungController::class, 'DanhSachNguoiDangTheoDoi']);
+    Route::post('/follow/{id}', [TheoDoiController::class, 'follow']); 
+    Route::delete('/unfollow/{id}', [TheoDoiController::class, 'unfollow']);
+    Route::get('/feed/blogs', [FeedController::class, 'blogs']);
 
+    
     Route::get('/user/danh-muc', [DanhMucController::class, 'index']);
 
 
     //kehoach
+    Route::get('/user/ke-hoach', [KeHoachBuaAnController::class, 'index']);
+    Route::get('/user/ke-hoach/{id}', [KeHoachBuaAnController::class, 'show']);
     Route::post('/user/ke-hoach', [KeHoachBuaAnController::class, 'store']);
     Route::put('/user/ke-hoach/{id}', [KeHoachBuaAnController::class, 'update']);
     Route::delete('/user/ke-hoach/{id}', [KeHoachBuaAnController::class, 'destroy']);
@@ -80,6 +102,11 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/user/danh-gia',[DanhGiaController::class, 'danhSachDanhGiaCuaToi']); // user quản lý đánh giá của mình
     Route::put('/danh-gia/{id}', [DanhGiaController::class, 'update']); //cap nhap danh gia
     Route::delete('/danh-gia/{id}', [DanhGiaController::class, 'destroy']); // xoa danh gia
+
+    //yeu thich
+    Route::post('/yeu-thich/toggle', [YeuThichController::class, 'toggle']);
+    Route::get('/yeu-thich/check/{id}', [YeuThichController::class, 'check']);
+    Route::get('/user/yeu-thich', [YeuThichController::class, 'danhSachYeuThich']);
 
 
 
@@ -98,7 +125,6 @@ Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
 
     Route::get('/admin/cong-thuc', [AdminController::class, 'layTatCaCongThuc']);
     Route::put('/admin/cong-thuc/{id}', [AdminController::class, 'updateTrangThai']);
-
 
 
     Route::get('/users', [NguoiDungController::class, 'HienThiDSNguoiDung']);

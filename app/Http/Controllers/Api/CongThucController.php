@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\CongThuc;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
@@ -16,15 +17,18 @@ class CongThucController extends Controller
      */
     public function index()
     {
+        $maNguoiDung = Auth::id(); // == auth()->user()->ma_nguoi_dung
+
         $congThucs = CongThuc::with([
             'danhMuc:ma_danh_muc,ten_danh_muc'
         ])
-            ->orderBy('ma_cong_thuc', 'desc')
+            ->where('ma_nguoi_dung', $maNguoiDung)
+            ->orderByDesc('ma_cong_thuc')
             ->get();
 
         return response()->json([
             'data' => $congThucs
-        ]);
+        ], 200);
     }
 
     /**
@@ -47,11 +51,20 @@ class CongThucController extends Controller
 
     public function show($id)
     {
-        $congThuc = CongThuc::find($id);
+        $maNguoiDung = auth()->id();
+
+        $congThuc = CongThuc::with([
+            'danhMuc',
+            'nguyenLieus',
+            'buocNaus'
+        ])
+            ->where('ma_cong_thuc', $id)
+            ->where('ma_nguoi_dung', $maNguoiDung)
+            ->first();
 
         if (!$congThuc) {
             return response()->json([
-                'message' => 'Không tìm thấy công thức'
+                'message' => 'Không tìm thấy công thức hoặc bạn không có quyền'
             ], 404);
         }
 
@@ -164,4 +177,111 @@ class CongThucController extends Controller
             'message' => 'Cập nhật trạng thái thành công'
         ]);
     }
+
+   public function danhSachCongThuc(Request $request)
+    {
+        $congThucs = CongThuc::with(['danhMuc', 'nguoiDung'])
+            ->where('trang_thai', 2)
+            ->orderByDesc('ma_cong_thuc')
+            ->paginate(9);
+
+        $data = $congThucs->getCollection()->map(function ($ct) {
+            return [
+                'ma_cong_thuc'  => $ct->ma_cong_thuc,
+                'ten_cong_thuc' => $ct->ten_cong_thuc,
+                'slug'          => $ct->slug,
+                'anh_cong_thuc' => $ct->anh_cong_thuc,
+                'do_kho'        => $ct->do_kho,
+                'thoi_gian_nau' => $ct->thoi_gian_nau,
+
+                'danh_muc' => [
+                    'ma_danh_muc'  => optional($ct->danhMuc)->ma_danh_muc,
+                    'ten_danh_muc' => optional($ct->danhMuc)->ten_danh_muc,
+                ],
+
+                'tac_gia' => [
+                    'ma_nguoi_dung' => optional($ct->nguoiDung)->ma_nguoi_dung,
+                    'ten_nguoi_dung'=> optional($ct->nguoiDung)->ten_nguoi_dung,
+                    'anh_dai_dien'  => optional($ct->nguoiDung)->anh_dai_dien,
+                ],
+            ];
+        });
+
+        return response()->json([
+            'status' => true,
+            'data'   => $data,
+            'pagination' => [
+                'current_page' => $congThucs->currentPage(),
+                'last_page'    => $congThucs->lastPage(),
+                'per_page'     => $congThucs->perPage(),
+                'total'        => $congThucs->total(),
+            ]
+        ]);
+    }
+    public function chiTietCongThuc($maCongThuc)
+    {
+        $user = auth('api')->user();
+
+        $ct = CongThuc::with([
+                'danhMuc',
+                'nguoiDung',
+                'nguyenLieus',
+                'buocNaus'
+            ])
+            ->where('ma_cong_thuc', $maCongThuc)
+            ->where('trang_thai', 2)
+            ->first();
+
+        if (!$ct) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Công thức không tồn tại'
+            ], 404);
+        }
+
+        $isFavorite = false;
+        if ($user) {
+            $isFavorite = YeuThich::where([
+                'ma_nguoi_dung' => $user->ma_nguoi_dung,
+                'ma_cong_thuc'  => $ct->ma_cong_thuc
+            ])->exists();
+        }
+
+        return response()->json([
+            'status' => true,
+            'data' => [
+                'ma_cong_thuc'  => $ct->ma_cong_thuc,
+                'ten_cong_thuc' => $ct->ten_cong_thuc,
+                'mo_ta'         => $ct->mo_ta,
+                'anh_cong_thuc' => $ct->anh_cong_thuc,
+                'do_kho'        => $ct->do_kho,
+                'thoi_gian_nau' => $ct->thoi_gian_nau,
+                'slug'          => $ct->slug,
+
+                'danh_muc' => [
+                    'ma_danh_muc'  => $ct->danhMuc->ma_danh_muc ?? null,
+                    'ten_danh_muc' => $ct->danhMuc->ten_danh_muc ?? null,
+                ],
+
+                'tac_gia' => [
+                    'ma_nguoi_dung' => $ct->nguoiDung->ma_nguoi_dung ?? null,
+                    'ten_nguoi_dung'=> $ct->nguoiDung->ten_nguoi_dung ?? null,
+                    'anh_dai_dien'  => $ct->nguoiDung->anh_dai_dien ?? null,
+                ],
+
+                'nguyen_lieu' => $ct->nguyenLieus->map(fn ($nl) => [
+                    'ten_nguyen_lieu' => $nl->ten_nguyen_lieu,
+                    'so_luong'        => $nl->so_luong,
+                ]),
+
+                'buoc_nau' => $ct->buocNaus->map(fn ($b) => [
+                    'thu_tu'  => $b->thu_tu,
+                    'noi_dung'=> $b->noi_dung,
+                ]),
+
+                'is_favorite' => $isFavorite
+            ]
+        ]);
+    }
+
 }
