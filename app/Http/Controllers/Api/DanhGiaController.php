@@ -79,7 +79,7 @@ class DanhGiaController extends Controller
     }
 
 
-    // Danh sách đánh giá của user đang đăng nhập  “Tao đã đi đánh giá những bài nào?”
+    // Danh sách đánh giá của user đang đăng nhập  “Tao đã đi đánh giá những bài nào?” quan ly
     public function danhSachDanhGiaCuaToi()
     {
         $user = Auth::guard('api')->user();
