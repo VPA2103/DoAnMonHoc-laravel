@@ -17,8 +17,10 @@ use App\Http\Controllers\Api\BinhLuanController;
 use App\Http\Controllers\Api\BlogController;
 use App\Http\Controllers\Api\FeedController;
 use App\Http\Controllers\Api\TheoDoiController;
+use App\Http\Controllers\Api\CauHoiController;
 use App\Http\Controllers\Api\BuocNauController;
 use App\Http\Controllers\Api\YeuThichController;
+use App\Http\Controllers\Api\ToCaoController;
 Route::post('/upload', [UploadController::class, 'upload']);
 
 Route::get('/test-cloudinary', function () {
@@ -81,6 +83,12 @@ Route::get(
 );
 
 Route::middleware(['auth:api'])->group(function () {
+    //to cao
+    Route::post('/to-cao', [ToCaoController::class, 'store']);
+    Route::get('/to-cao/me', [ToCaoController::class, 'myToCao']);
+
+
+
     Route::get('/profile', [NguoiDungController::class, 'GetNguoiDungID']);
     Route::post('/profile/edit', [AuthController::class, 'updateProfile']);
 
@@ -136,10 +144,21 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('blogs', [BlogController::class, 'store']);
     Route::put('blogs/{id}', [BlogController::class, 'update']);
     Route::delete('blogs/{id}', [BlogController::class, 'destroy']);
+
+
+    //cau hoi cua user 
+    Route::post('/cau-hoi', [CauHoiController::class, 'store']);
+    Route::get('/cau-hoi-cua-toi', [CauHoiController::class, 'myQuestions']);
     Route::put('/blogs/{id}/trang-thai', [BlogController::class, 'updateTrangThai']);
 });
 
 Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
+    //to cao
+    Route::get('/to-cao', [ToCaoController::class, 'index']);
+    Route::put('/to-cao/{ma_to_cao}', [ToCaoController::class, 'duyet']);
+    Route::delete('/admin/danh-muc-to-cao/{id}', [ToCaoController::class, 'danhMucDestroy']);
+
+
     Route::get('/admin/profile', [AdminController::class, 'GetNguoiDungID']);
     Route::post('/admin/profile', [AdminController::class, 'updateAdminProfile']);
     Route::get('/admin/users', [AdminController::class, 'getUserList']);
@@ -170,6 +189,13 @@ Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
 
     //danh gia 
     Route::get('/admin/danh-gia', [DanhGiaController::class, 'index']);
+
+
+    //hien danh sach cau hoi
+    Route::get('/admin/cau-hoi', [CauHoiController::class, 'adminIndex']);
+    Route::post('/admin/cau-hoi/{maCauHoi}/tra-loi', [CauHoiController::class,'adminTraLoi']);
+
+
     //blog admin
     Route::get('/admin/blogs', [BlogController::class, 'indexAdmin']);
     Route::put('/admin/blogs/{id}/duyet', [BlogController::class, 'duyetBlog']);
