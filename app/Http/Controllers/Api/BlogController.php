@@ -24,6 +24,7 @@ class BlogController extends Controller
             'tieu_de' => 'required|string|max:255',
             'noi_dung' => 'required|string',
             'hinh_anh' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+            'trang_thai' => 'nullable|in:0,1', // Thêm validate trạng thái (0 = Draft, 1 = Published)
         ]);
 
         // Tạo slug cơ bản
@@ -40,6 +41,7 @@ class BlogController extends Controller
         $data = $validated;
         $data['slug'] = $slug;
         $data['ma_nguoi_dung'] = auth()->id();
+        $data['trang_thai'] = $request->trang_thai ?? 1; // Mặc định là Published (1) khi tạo mới
             //  XỬ LÝ LƯU ẢNH 
         if ($request->hasFile('hinh_anh')) {
             // Lưu vào storage/app/public/blogs
@@ -76,6 +78,7 @@ class BlogController extends Controller
             'tieu_de' => 'required|string|max:255',
             'noi_dung' => 'required|string',
             'hinh_anh' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+            'trang_thai' => 'nullable|in:0,1', // Thêm validate trạng thái khi update
         ]);
 
         $data = $validated;
@@ -104,7 +107,10 @@ class BlogController extends Controller
             $path = $request->file('hinh_anh')->store('blogs', 'public');
             $data['hinh_anh'] = $path;
         }
-
+        // Cập nhật trạng thái nếu có gửi
+        if ($request->has('trang_thai')) {
+            $data['trang_thai'] = $request->trang_thai;
+        }
         // Nếu không gửi ảnh mới, Laravel sẽ tự giữ nguyên ảnh cũ vì $data chỉ chứa field được validate
         $blog->update($data);
 
@@ -129,5 +135,27 @@ class BlogController extends Controller
         $blog->delete();
 
         return response()->json(['success' => true]);
+    }
+
+    public function updateTrangThai(Request $request, $id)
+    {
+        $request->validate([
+            'trang_thai' => 'required|in:0,1'
+        ]);
+
+        $blog = Blog::findOrFail($id);
+
+        // Kiểm tra quyền (chỉ owner mới được đổi trạng thái)
+        if ($blog->ma_nguoi_dung !== auth()->id()) {
+            return response()->json(['message' => 'Không có quyền'], 403);
+        }
+
+        $blog->update(['trang_thai' => $request->trang_thai]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Cập nhật trạng thái thành công',
+            'data' => $blog
+        ]);
     }
 }

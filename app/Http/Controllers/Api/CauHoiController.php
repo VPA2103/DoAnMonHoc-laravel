@@ -52,18 +52,12 @@ class CauHoiController extends Controller
 
     public function adminIndex()
     {
-        $cauHois = CauHoi::with('traLois')
-            ->orderBy('ma_cau_hoi', 'desc')
-            ->get()
-            ->map(function ($cauHoi) {
-                return [
-                    'ma_cau_hoi' => $cauHoi->ma_cau_hoi,
-                    'noi_dung' => $cauHoi->noi_dung,
-                    'ma_nguoi_dung' => $cauHoi->ma_nguoi_dung,
-                    'da_tra_loi' => $cauHoi->traLois->count() > 0,
-                    'tra_loi' => $cauHoi->traLois
-                ];
-            });
+        $cauHois = CauHoi::with([
+            'nguoiDung:ma_nguoi_dung,ten_nguoi_dung',
+            'traLois'
+        ])
+        ->orderBy('ma_cau_hoi', 'desc')
+        ->get();
 
         return response()->json([
             'success' => true,
