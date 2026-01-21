@@ -100,10 +100,16 @@ class CongThucController extends Controller
             $data['anh_cong_thuc'] = $path;
         }
 
-        CongThuc::create($data);
+        // CongThuc::create($data);
+
+        // return response()->json([
+        //     'message' => 'Thêm công thức thành công'
+        // ], 201);
+        $congThuc = CongThuc::create($data);
 
         return response()->json([
-            'message' => 'Thêm công thức thành công'
+            'message' => 'Thêm công thức thành công',
+            'data' => $congThuc
         ], 201);
     }
 

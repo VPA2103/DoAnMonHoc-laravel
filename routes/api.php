@@ -17,7 +17,7 @@ use App\Http\Controllers\Api\BinhLuanController;
 use App\Http\Controllers\Api\BlogController;
 use App\Http\Controllers\Api\FeedController;
 use App\Http\Controllers\Api\TheoDoiController;
-
+use App\Http\Controllers\Api\BuocNauController;
 use App\Http\Controllers\Api\YeuThichController;
 Route::post('/upload', [UploadController::class, 'upload']);
 
@@ -97,7 +97,11 @@ Route::middleware(['auth:api'])->group(function () {
     Route::delete('/user/cong-thuc/{id}', [CongThucController::class, 'destroy']);
     Route::post('/user/cong-thuc', [CongThucController::class, 'store']);
     Route::get('/user/cong-thuc/{id}', [CongThucController::class, 'show']);
-
+    // User thêm bước nấu mới
+    Route::post('/user/buoc-nau', [BuocNauController::class, 'store']); 
+    Route::put('/user/buoc-nau/{id}', [BuocNauController::class, 'update']); 
+    Route::delete('/user/buoc-nau/{id}', [BuocNauController::class, 'destroy']);
+    Route::get('/user/buoc-nau/cong-thuc/{id}', [BuocNauController::class, 'getStepsByRecipeId']);
     //theo doi
     Route::get('/user/following', [NguoiDungController::class, 'DanhSachNguoiDangTheoDoi']);
     Route::post('/follow/{id}', [TheoDoiController::class, 'follow']); 
@@ -128,9 +132,11 @@ Route::middleware(['auth:api'])->group(function () {
 
 
 
+    Route::get('/user/blogs', [BlogController::class, 'blogCuaToi']);
     Route::post('blogs', [BlogController::class, 'store']);
     Route::put('blogs/{id}', [BlogController::class, 'update']);
     Route::delete('blogs/{id}', [BlogController::class, 'destroy']);
+    Route::put('/blogs/{id}/trang-thai', [BlogController::class, 'updateTrangThai']);
 });
 
 Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
@@ -160,9 +166,14 @@ Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
     Route::put('/nguyen-lieu/{id}', [NguyenLieuController::class, 'update']);
     Route::delete('/nguyen-lieu/{id}', [NguyenLieuController::class, 'destroy']);
 
+
+
     //danh gia 
     Route::get('/admin/danh-gia', [DanhGiaController::class, 'index']);
-
+    //blog admin
+    Route::get('/admin/blogs', [BlogController::class, 'indexAdmin']);
+    Route::put('/admin/blogs/{id}/duyet', [BlogController::class, 'duyetBlog']);
+    Route::get('/admin/blog-cho-duyet', [BlogController::class, 'blogChoDuyet']);
 });
 
 
