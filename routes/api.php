@@ -139,7 +139,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/user/yeu-thich', [YeuThichController::class, 'danhSachYeuThich']);
 
 
-
+    //blog
     Route::get('/user/blogs', [BlogController::class, 'blogCuaToi']);
     Route::post('blogs', [BlogController::class, 'store']);
     Route::put('blogs/{id}', [BlogController::class, 'update']);
