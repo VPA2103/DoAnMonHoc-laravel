@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\CongThucController;
 use App\Http\Controllers\Api\DanhMucController;
 use App\Http\Controllers\Api\KeHoachBuaAnController;
 use App\Http\Controllers\Api\NguoiDungController;
+use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PasswordOtpController;
 use App\Http\Controllers\UploadController;
@@ -19,11 +20,16 @@ use App\Http\Controllers\Api\TheoDoiController;
 use App\Http\Controllers\Api\CauHoiController;
 use App\Http\Controllers\Api\BuocNauController;
 use App\Http\Controllers\Api\YeuThichController;
+use App\Http\Controllers\Api\ToCaoController;
 Route::post('/upload', [UploadController::class, 'upload']);
 
 Route::get('/test-cloudinary', function () {
     return config('cloudinary.cloud_url');
 });
+
+//search
+Route::get('/search', [SearchController::class, 'search']);
+
 
 // xem đánh giá theo công thức 
 Route::get('/danh-gia/cong-thuc/{id}', [DanhGiaController::class, 'theoCongThuc']);
@@ -66,6 +72,10 @@ Route::prefix('blogs')->group(function () {
  
 });
 
+
+// hien danh sach danh mục len trang chu
+Route::get('/danh-muc', [DanhMucController::class, 'index']);
+
 //binh luan
 Route::get(
     '/binh-luan/cong-thuc/{id}',
@@ -73,6 +83,12 @@ Route::get(
 );
 
 Route::middleware(['auth:api'])->group(function () {
+    //to cao
+    Route::post('/to-cao', [ToCaoController::class, 'store']);
+    Route::get('/to-cao/me', [ToCaoController::class, 'myToCao']);
+
+
+
     Route::get('/profile', [NguoiDungController::class, 'GetNguoiDungID']);
     Route::post('/profile/edit', [AuthController::class, 'updateProfile']);
 
@@ -124,6 +140,7 @@ Route::middleware(['auth:api'])->group(function () {
 
 
 
+    Route::get('/user/blogs', [BlogController::class, 'blogCuaToi']);
     Route::post('blogs', [BlogController::class, 'store']);
     Route::put('blogs/{id}', [BlogController::class, 'update']);
     Route::delete('blogs/{id}', [BlogController::class, 'destroy']);
@@ -136,6 +153,12 @@ Route::middleware(['auth:api'])->group(function () {
 });
 
 Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
+    //to cao
+    Route::get('/to-cao', [ToCaoController::class, 'index']);
+    Route::put('/to-cao/{ma_to_cao}', [ToCaoController::class, 'duyet']);
+    Route::delete('/admin/danh-muc-to-cao/{id}', [ToCaoController::class, 'danhMucDestroy']);
+
+
     Route::get('/admin/profile', [AdminController::class, 'GetNguoiDungID']);
     Route::post('/admin/profile', [AdminController::class, 'updateAdminProfile']);
     Route::get('/admin/users', [AdminController::class, 'getUserList']);
@@ -162,6 +185,8 @@ Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
     Route::put('/nguyen-lieu/{id}', [NguyenLieuController::class, 'update']);
     Route::delete('/nguyen-lieu/{id}', [NguyenLieuController::class, 'destroy']);
 
+
+
     //danh gia 
     Route::get('/admin/danh-gia', [DanhGiaController::class, 'index']);
 
@@ -171,6 +196,10 @@ Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
     Route::post('/admin/cau-hoi/{maCauHoi}/tra-loi', [CauHoiController::class,'adminTraLoi']);
 
 
+    //blog admin
+    Route::get('/admin/blogs', [BlogController::class, 'indexAdmin']);
+    Route::put('/admin/blogs/{id}/duyet', [BlogController::class, 'duyetBlog']);
+    Route::get('/admin/blog-cho-duyet', [BlogController::class, 'blogChoDuyet']);
 });
 
 

@@ -10,8 +10,13 @@ class ToCao extends Model
     use HasFactory;
 
     protected $table = 'to_cao';
-
-    protected $fillable = ['noi_dung', 'ma_nguoi_dung'];
+    protected $primaryKey = 'ma_to_cao';
+    protected $fillable = [
+        'noi_dung',
+        'danh_muc_to_cao',
+        'ma_nguoi_dung',
+        'trang_thai'
+    ];
 
     public function nguoiDung()
     {
