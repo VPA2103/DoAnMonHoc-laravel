@@ -16,7 +16,7 @@ use App\Http\Controllers\Api\BinhLuanController;
 use App\Http\Controllers\Api\BlogController;
 use App\Http\Controllers\Api\FeedController;
 use App\Http\Controllers\Api\TheoDoiController;
-
+use App\Http\Controllers\Api\CauHoiController;
 use App\Http\Controllers\Api\YeuThichController;
 Route::post('/upload', [UploadController::class, 'upload']);
 
@@ -122,6 +122,11 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('blogs', [BlogController::class, 'store']);
     Route::put('blogs/{id}', [BlogController::class, 'update']);
     Route::delete('blogs/{id}', [BlogController::class, 'destroy']);
+
+
+    //cau hoi cua user 
+    Route::post('/cau-hoi', [CauHoiController::class, 'store']);
+    Route::get('/cau-hoi-cua-toi', [CauHoiController::class, 'myQuestions']);
 });
 
 Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
@@ -153,6 +158,12 @@ Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
 
     //danh gia 
     Route::get('/admin/danh-gia', [DanhGiaController::class, 'index']);
+
+
+    //hien danh sach cau hoi
+    Route::get('/admin/cau-hoi', [CauHoiController::class, 'adminIndex']);
+    Route::post('/admin/cau-hoi/{maCauHoi}/tra-loi', [CauHoiController::class,'adminTraLoi']);
+
 
 });
 
