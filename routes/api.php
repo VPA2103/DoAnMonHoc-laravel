@@ -119,6 +119,7 @@ Route::middleware(['auth:api'])->group(function () {
 
 
 
+    Route::get('/user/blogs', [BlogController::class, 'blogCuaToi']);
     Route::post('blogs', [BlogController::class, 'store']);
     Route::put('blogs/{id}', [BlogController::class, 'update']);
     Route::delete('blogs/{id}', [BlogController::class, 'destroy']);
@@ -151,9 +152,14 @@ Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
     Route::put('/nguyen-lieu/{id}', [NguyenLieuController::class, 'update']);
     Route::delete('/nguyen-lieu/{id}', [NguyenLieuController::class, 'destroy']);
 
+
+
     //danh gia 
     Route::get('/admin/danh-gia', [DanhGiaController::class, 'index']);
-
+    //blog admin
+    Route::get('/admin/blogs', [BlogController::class, 'indexAdmin']);
+    Route::put('/admin/blogs/{id}/duyet', [BlogController::class, 'duyetBlog']);
+    Route::get('/admin/blog-cho-duyet', [BlogController::class, 'blogChoDuyet']);
 });
 
 

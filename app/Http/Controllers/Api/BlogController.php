@@ -7,17 +7,22 @@ use App\Models\Blog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+
 class BlogController extends Controller
 {
     public function index()
     {
-        return response()->json(Blog::orderBy('created_at', 'desc')->get());
+        return response()->json(
+            Blog::where('trang_thai', 1)
+                ->orderByDesc('created_at')
+                ->get()
+        );
     }
 
     public function store(Request $request)
     {
         if (!auth()->check()) {
-            return response()->json(['message' => 'Bạn chưa đăng nhập!'], 401);
+            return response()->json(['message' => 'Chưa đăng nhập'], 401);
         }
 
         $validated = $request->validate([
@@ -26,44 +31,53 @@ class BlogController extends Controller
             'hinh_anh' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
 
-        // Tạo slug cơ bản
+        // ✅ TẠO SLUG KHÔNG TRÙNG
         $baseSlug = Str::slug($request->tieu_de);
         $slug = $baseSlug;
         $count = 1;
 
-        // Nếu trùng thì thêm -1, -2,...
         while (Blog::where('slug', $slug)->exists()) {
             $slug = $baseSlug . '-' . $count;
             $count++;
         }
 
-        $data = $validated;
-        $data['slug'] = $slug;
-        $data['ma_nguoi_dung'] = auth()->id();
-            //  XỬ LÝ LƯU ẢNH 
+        // ✅ UPLOAD ẢNH (QUAN TRỌNG)
+        $path = null;
         if ($request->hasFile('hinh_anh')) {
-            // Lưu vào storage/app/public/blogs
-            // Hàm store sẽ trả về đường dẫn ví dụ: "blogs/abcxyz.jpg"
             $path = $request->file('hinh_anh')->store('blogs', 'public');
-            $data['hinh_anh'] = $path;
         }
-        $blog = Blog::create($data);
 
-        return response()->json(['success' => true, 'data' => $blog], 201);
+        $blog = Blog::create([
+            'tieu_de' => $request->tieu_de,
+            'slug' => $slug,
+            'noi_dung' => $request->noi_dung,
+            'hinh_anh' => $path, // ✅ LƯU ĐƯỜNG DẪN FILE
+            'ma_nguoi_dung' => auth()->id(),
+            'trang_thai' => 0 // CHỜ DUYỆT
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Đăng blog thành công, chờ admin duyệt',
+            'data' => $blog
+        ]);
     }
 
     public function show($id)
     {
-        $blog = Blog::find($id);
-        if (!$blog) {
-            return response()->json(['message' => 'Không tìm thấy blog'], 404);
-        }
-        return response()->json($blog);
+    $blog = Blog::with('nguoiDung')->findOrFail($id);
+
+    $blog->hinh_anh_url = $blog->hinh_anh
+        ? asset('storage/' . $blog->hinh_anh)
+        : null;
+
+    return response()->json($blog);
     }
 
     public function update(Request $request, $id)
     {
         $blog = Blog::find($id);
+
         if (!$blog) {
             return response()->json(['message' => 'Không tìm thấy blog'], 404);
         }
@@ -78,42 +92,49 @@ class BlogController extends Controller
             'hinh_anh' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
 
-        $data = $validated;
+        $data = [
+            'tieu_de' => $request->tieu_de,
+            'noi_dung' => $request->noi_dung,
+            'trang_thai' => 0 // SỬA → QUAY LẠI CHỜ DUYỆT
+        ];
 
-        if ($request->filled('tieu_de')) {
-            $baseSlug = Str::slug($request->tieu_de);
-            $slug = $baseSlug;
-            $count = 1;
+        // ✅ SLUG KHÔNG TRÙNG (TRỪ CHÍNH NÓ)
+        $baseSlug = Str::slug($request->tieu_de);
+        $slug = $baseSlug;
+        $count = 1;
 
-            // Tránh trùng với các bài khác (không tính chính nó)
-            while (Blog::where('slug', $slug)->where('ma_blog', '!=', $id)->exists()) {
-                $slug = $baseSlug . '-' . $count;
-                $count++;
-            }
-
-            $data['slug'] = $slug;
+        while (
+            Blog::where('slug', $slug)
+                ->where('ma_blog', '!=', $id)
+                ->exists()
+        ) {
+            $slug = $baseSlug . '-' . $count;
+            $count++;
         }
-        // XỬ LÝ CẬP NHẬT ẢNH (QUAN TRỌNG)
+
+        $data['slug'] = $slug;
+
+        // ✅ UPDATE ẢNH
         if ($request->hasFile('hinh_anh')) {
-            // Bước A: Xóa ảnh cũ đi cho đỡ rác (nếu có)
             if ($blog->hinh_anh && Storage::disk('public')->exists($blog->hinh_anh)) {
                 Storage::disk('public')->delete($blog->hinh_anh);
             }
 
-            // Lưu ảnh mới
-            $path = $request->file('hinh_anh')->store('blogs', 'public');
-            $data['hinh_anh'] = $path;
+            $data['hinh_anh'] = $request->file('hinh_anh')->store('blogs', 'public');
         }
 
-        // Nếu không gửi ảnh mới, Laravel sẽ tự giữ nguyên ảnh cũ vì $data chỉ chứa field được validate
         $blog->update($data);
 
-        return response()->json(['success' => true, 'data' => $blog]);
+        return response()->json([
+            'success' => true,
+            'data' => $blog
+        ]);
     }
 
     public function destroy($id)
     {
         $blog = Blog::find($id);
+
         if (!$blog) {
             return response()->json(['message' => 'Không tìm thấy blog'], 404);
         }
@@ -122,12 +143,68 @@ class BlogController extends Controller
             return response()->json(['message' => 'Không có quyền xóa'], 403);
         }
 
-        // Xóa luôn ảnh trong storage khi xóa bài viết
         if ($blog->hinh_anh && Storage::disk('public')->exists($blog->hinh_anh)) {
             Storage::disk('public')->delete($blog->hinh_anh);
         }
+
         $blog->delete();
 
         return response()->json(['success' => true]);
     }
+
+    // ADMIN
+    public function duyetBlog(Request $request, $id)
+    {
+        $request->validate([
+            'trang_thai' => 'required|in:1,2'
+        ]);
+
+        $blog = Blog::findOrFail($id);
+
+        $blog->update([
+            'trang_thai' => $request->trang_thai
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => $request->trang_thai == 1
+                ? 'Duyệt blog thành công'
+                : 'Từ chối blog thành công',
+            'data' => $blog
+        ]);
+    }
+
+    public function blogChoDuyet()
+    {
+        return response()->json(
+            Blog::where('trang_thai', 0)
+                ->orderByDesc('created_at')
+                ->get()
+        );
+    }
+
+    public function indexAdmin()
+    {
+        return response()->json([
+            'data' => Blog::with('nguoiDung')
+                ->orderByDesc('created_at')
+                ->get()
+        ]);
+    }
+
+   public function blogCuaToi()
+    {
+    $blogs = Blog::where('ma_nguoi_dung', auth()->id())
+        ->orderByDesc('created_at')
+        ->get()
+        ->map(function ($blog) {
+            $blog->hinh_anh_url = $blog->hinh_anh
+                ? asset('storage/' . $blog->hinh_anh)
+                : null;
+            return $blog;
+        });
+
+    return response()->json($blogs);
+    }
+
 }
