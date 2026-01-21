@@ -46,7 +46,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::get('/ke-hoach', [KeHoachBuaAnController::class, 'LayDanhSachKeHoachTrangChu']);
 Route::get('/ke-hoach/{id}', [KeHoachBuaAnController::class, 'LayKeHoachTrangChuId']);
 
-//congthuc
+//congthuc  
 Route::get('/cong-thuc', [CongThucController::class, 'index']);
 Route::get('/cong-thuc/{id}', [CongThucController::class, 'show']);
 Route::post('/cong-thuc', [CongThucController::class, 'store']);
@@ -139,7 +139,7 @@ Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
     Route::post('/admin/danh-muc', [DanhMucController::class, 'store']);
     Route::put('/admin/danh-muc/{id}', [DanhMucController::class, 'update']);
     Route::delete('/admin/danh-muc/{id}', [DanhMucController::class, 'destroy']);
-
+ 
     Route::get('/admin/cong-thuc', [AdminController::class, 'layTatCaCongThuc']);
     Route::put('/admin/cong-thuc/{id}', [AdminController::class, 'updateTrangThai']);
 
