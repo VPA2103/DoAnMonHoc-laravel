@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\CongThucController;
 use App\Http\Controllers\Api\DanhMucController;
 use App\Http\Controllers\Api\KeHoachBuaAnController;
 use App\Http\Controllers\Api\NguoiDungController;
+use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PasswordOtpController;
 use App\Http\Controllers\UploadController;
@@ -23,6 +24,10 @@ Route::post('/upload', [UploadController::class, 'upload']);
 Route::get('/test-cloudinary', function () {
     return config('cloudinary.cloud_url');
 });
+
+//search
+Route::get('/search', [SearchController::class, 'search']);
+
 
 // xem đánh giá theo công thức 
 Route::get('/danh-gia/cong-thuc/{id}', [DanhGiaController::class, 'theoCongThuc']);
@@ -64,6 +69,10 @@ Route::prefix('blogs')->group(function () {
 
  
 });
+
+
+// hien danh sach danh mục len trang chu
+Route::get('/danh-muc', [DanhMucController::class, 'index']);
 
 //binh luan
 Route::get(
