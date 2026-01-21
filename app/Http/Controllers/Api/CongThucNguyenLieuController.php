@@ -57,5 +57,44 @@ public function indexByCongThuc($id)
         'data' => $congThuc->nguyenLieus
     ]);
 }
+   
+   public function update(Request $request)
+        {
+            $data = $request->validate([
+                'ma_cong_thuc'   => 'required|exists:cong_thuc,ma_cong_thuc',
+                'ma_nguyen_lieu' => 'required|exists:nguyen_lieu,ma_nguyen_lieu',
+                'so_luong'       => 'required|numeric|min:0'
+            ]);
+
+            $congThuc = CongThuc::findOrFail($data['ma_cong_thuc']);
+
+            $congThuc->nguyenLieus()
+                ->updateExistingPivot(
+                    $data['ma_nguyen_lieu'],
+                    ['so_luong' => $data['so_luong']]
+                );
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cập nhật thành công'
+            ]);
+        }
+
+   public function destroy(Request $request)
+        {
+            $data = $request->validate([
+                'ma_cong_thuc'   => 'required|exists:cong_thuc,ma_cong_thuc',
+                'ma_nguyen_lieu' => 'required|exists:nguyen_lieu,ma_nguyen_lieu'
+            ]);
+
+            $congThuc = CongThuc::findOrFail($data['ma_cong_thuc']);
+
+            $congThuc->nguyenLieus()->detach($data['ma_nguyen_lieu']);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Xóa thành công'
+            ]);
+        }
 
 }

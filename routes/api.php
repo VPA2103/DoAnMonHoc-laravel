@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\CongThucController;
 use App\Http\Controllers\Api\DanhMucController;
 use App\Http\Controllers\Api\KeHoachBuaAnController;
 use App\Http\Controllers\Api\NguoiDungController;
+use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PasswordOtpController;
 use App\Http\Controllers\UploadController;
@@ -16,8 +17,10 @@ use App\Http\Controllers\Api\BinhLuanController;
 use App\Http\Controllers\Api\BlogController;
 use App\Http\Controllers\Api\FeedController;
 use App\Http\Controllers\Api\TheoDoiController;
+use App\Http\Controllers\Api\CauHoiController;
 use App\Http\Controllers\Api\BuocNauController;
 use App\Http\Controllers\Api\YeuThichController;
+use App\Http\Controllers\Api\ToCaoController;
 use App\Http\Controllers\Api\AdminNguyenLieuController;
 use App\Http\Controllers\Api\CongThucNguyenLieuController;
 
@@ -26,6 +29,10 @@ Route::post('/upload', [UploadController::class, 'upload']);
 Route::get('/test-cloudinary', function () {
     return config('cloudinary.cloud_url');
 });
+
+//search
+Route::get('/search', [SearchController::class, 'search']);
+
 
 // xem đánh giá theo công thức 
 Route::get('/danh-gia/cong-thuc/{id}', [DanhGiaController::class, 'theoCongThuc']);
@@ -68,6 +75,10 @@ Route::prefix('blogs')->group(function () {
  
 });
 
+
+// hien danh sach danh mục len trang chu
+Route::get('/danh-muc', [DanhMucController::class, 'index']);
+
 //binh luan
 Route::get(
     '/binh-luan/cong-thuc/{id}',
@@ -75,6 +86,12 @@ Route::get(
 );
 
 Route::middleware(['auth:api'])->group(function () {
+    //to cao
+    Route::post('/to-cao', [ToCaoController::class, 'store']);
+    Route::get('/to-cao/me', [ToCaoController::class, 'myToCao']);
+
+
+
     Route::get('/profile', [NguoiDungController::class, 'GetNguoiDungID']);
     Route::post('/profile/edit', [AuthController::class, 'updateProfile']);
 
@@ -125,19 +142,34 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/user/yeu-thich', [YeuThichController::class, 'danhSachYeuThich']);
 
 
-
+    //blog
+    Route::get('/user/blogs', [BlogController::class, 'blogCuaToi']);
     Route::post('blogs', [BlogController::class, 'store']);
     Route::put('blogs/{id}', [BlogController::class, 'update']);
     Route::delete('blogs/{id}', [BlogController::class, 'destroy']);
+
+
+    //cau hoi cua user 
+    Route::post('/cau-hoi', [CauHoiController::class, 'store']);
+    Route::get('/cau-hoi-cua-toi', [CauHoiController::class, 'myQuestions']);
     Route::put('/blogs/{id}/trang-thai', [BlogController::class, 'updateTrangThai']);
 
     Route::get('/user/nguyen-lieu', [NguyenLieuController::class, 'index']);
     Route::post('/user/cong-thuc-nguyen-lieu',[CongThucNguyenLieuController::class, 'store']);
-    Route::get('/user/cong-thuc/{id}/nguyen-lieu',[CongThucNguyenLieuController::class, 'indexByCongThuc']
-);
+    Route::get('/user/cong-thuc/{id}/nguyen-lieu',[CongThucNguyenLieuController::class, 'indexByCongThuc']);
+        Route::put('/user/cong-thuc-nguyen-lieu', [CongThucNguyenLieuController::class, 'update']);
+    Route::delete('/user/cong-thuc-nguyen-lieu', [CongThucNguyenLieuController::class, 'destroy']);
+
+
 });
 
 Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
+    //to cao
+    Route::get('/to-cao', [ToCaoController::class, 'index']);
+    Route::put('/to-cao/{ma_to_cao}', [ToCaoController::class, 'duyet']);
+    Route::delete('/admin/danh-muc-to-cao/{id}', [ToCaoController::class, 'danhMucDestroy']);
+
+
     Route::get('/admin/profile', [AdminController::class, 'GetNguoiDungID']);
     Route::post('/admin/profile', [AdminController::class, 'updateAdminProfile']);
     Route::get('/admin/users', [AdminController::class, 'getUserList']);
@@ -158,15 +190,25 @@ Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
     Route::post('/users/{id}', [NguoiDungController::class, 'CapNhapNguoiDungTheoId']);
     Route::delete('/users/{id}', [NguoiDungController::class, 'XoaNguoiDungTheoId']);
 
-    Route::get('/admin/nguyen-lieu', [AdminNguyenLieuController::class, 'index']);
-    Route::get('/admin/nguyen-lieu/{id}', [AdminNguyenLieuController::class, 'show']);
-    Route::post('/admin/nguyen-lieu', [AdminNguyenLieuController::class, 'store']);
-    Route::put('/admin/nguyen-lieu/{id}', [AdminNguyenLieuController::class, 'update']);
-    Route::delete('/admin/nguyen-lieu/{id}', [AdminNguyenLieuController::class, 'destroy']);
+    Route::get('/nguyen-lieu', [NguyenLieuController::class, 'index']);
+    Route::get('/nguyen-lieu/{id}', [NguyenLieuController::class, 'show']);
+    Route::post('/nguyen-lieu', [NguyenLieuController::class, 'store']);
+    Route::put('/nguyen-lieu/{id}', [NguyenLieuController::class, 'update']);
+    Route::delete('/nguyen-lieu/{id}', [NguyenLieuController::class, 'destroy']);
 
     //danh gia 
     Route::get('/admin/danh-gia', [DanhGiaController::class, 'index']);
 
+
+    //hien danh sach cau hoi
+    Route::get('/admin/cau-hoi', [CauHoiController::class, 'adminIndex']);
+    Route::post('/admin/cau-hoi/{maCauHoi}/tra-loi', [CauHoiController::class,'adminTraLoi']);
+
+
+    //blog admin
+    Route::get('/admin/blogs', [BlogController::class, 'indexAdmin']);
+    Route::put('/admin/blogs/{id}/duyet', [BlogController::class, 'duyetBlog']);
+    Route::get('/admin/blog-cho-duyet', [BlogController::class, 'blogChoDuyet']);
 });
 
 
