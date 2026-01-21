@@ -54,7 +54,7 @@ class BuocNauController extends Controller
             'so_thu_tu' => 'integer|min:1',
             'noi_dung'  => 'string',
             'hinh_anh'  => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'thoi_gian'    => 'nullable|integer|min:0', // ✅ BẮT BUỘC
+            'thoi_gian'    => 'nullable|integer|min:0', // them cot thoi gian
 
         ]);
 
