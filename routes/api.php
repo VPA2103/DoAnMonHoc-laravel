@@ -18,6 +18,9 @@ use App\Http\Controllers\Api\FeedController;
 use App\Http\Controllers\Api\TheoDoiController;
 use App\Http\Controllers\Api\BuocNauController;
 use App\Http\Controllers\Api\YeuThichController;
+use App\Http\Controllers\Api\AdminNguyenLieuController;
+use App\Http\Controllers\Api\CongThucNguyenLieuController;
+
 Route::post('/upload', [UploadController::class, 'upload']);
 
 Route::get('/test-cloudinary', function () {
@@ -127,6 +130,11 @@ Route::middleware(['auth:api'])->group(function () {
     Route::put('blogs/{id}', [BlogController::class, 'update']);
     Route::delete('blogs/{id}', [BlogController::class, 'destroy']);
     Route::put('/blogs/{id}/trang-thai', [BlogController::class, 'updateTrangThai']);
+
+    Route::get('/user/nguyen-lieu', [NguyenLieuController::class, 'index']);
+    Route::post('/user/cong-thuc-nguyen-lieu',[CongThucNguyenLieuController::class, 'store']);
+    Route::get('/user/cong-thuc/{id}/nguyen-lieu',[CongThucNguyenLieuController::class, 'indexByCongThuc']
+);
 });
 
 Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
@@ -150,11 +158,11 @@ Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
     Route::post('/users/{id}', [NguoiDungController::class, 'CapNhapNguoiDungTheoId']);
     Route::delete('/users/{id}', [NguoiDungController::class, 'XoaNguoiDungTheoId']);
 
-    Route::get('/nguyen-lieu', [NguyenLieuController::class, 'index']);
-    Route::get('/nguyen-lieu/{id}', [NguyenLieuController::class, 'show']);
-    Route::post('/nguyen-lieu', [NguyenLieuController::class, 'store']);
-    Route::put('/nguyen-lieu/{id}', [NguyenLieuController::class, 'update']);
-    Route::delete('/nguyen-lieu/{id}', [NguyenLieuController::class, 'destroy']);
+    Route::get('/admin/nguyen-lieu', [AdminNguyenLieuController::class, 'index']);
+    Route::get('/admin/nguyen-lieu/{id}', [AdminNguyenLieuController::class, 'show']);
+    Route::post('/admin/nguyen-lieu', [AdminNguyenLieuController::class, 'store']);
+    Route::put('/admin/nguyen-lieu/{id}', [AdminNguyenLieuController::class, 'update']);
+    Route::delete('/admin/nguyen-lieu/{id}', [AdminNguyenLieuController::class, 'destroy']);
 
     //danh gia 
     Route::get('/admin/danh-gia', [DanhGiaController::class, 'index']);

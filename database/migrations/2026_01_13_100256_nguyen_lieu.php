@@ -12,14 +12,14 @@ return new class extends Migration {
     {
         Schema::create('nguyen_lieu', function (Blueprint $table) {
             $table->id('ma_nguyen_lieu');
-            $table->foreignId('ma_cong_thuc')
-                ->references('ma_cong_thuc')
-                ->on('cong_thuc')
-                ->cascadeOnDelete();
+            // $table->foreignId('ma_cong_thuc')
+            //     ->references('ma_cong_thuc')
+            //     ->on('cong_thuc')
+            //     ->cascadeOnDelete();
 
             $table->string('ten_nguyen_lieu');
             $table->string('don_vi_tinh')->nullable();
-            $table->decimal('so_luong', 10, 2)->nullable();
+            // $table->decimal('so_luong', 10, 2)->nullable(); so luong nam trong bang cong_thuc_nguyen_lieu
             $table->timestamps();
         });
     }
