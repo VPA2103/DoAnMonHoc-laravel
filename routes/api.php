@@ -30,6 +30,9 @@ Route::get('/test-cloudinary', function () {
     return config('cloudinary.cloud_url');
 });
 
+
+
+
 //search
 Route::get('/search', [SearchController::class, 'search']);
 
@@ -57,6 +60,9 @@ Route::get('/ke-hoach', [KeHoachBuaAnController::class, 'LayDanhSachKeHoachTrang
 Route::get('/ke-hoach/{id}', [KeHoachBuaAnController::class, 'LayKeHoachTrangChuId']);
 
 //congthuc  
+//congthuc
+//loc theo danh muc va do kho
+
 Route::get('/cong-thuc', [CongThucController::class, 'index']);
 Route::get('/cong-thuc/{id}', [CongThucController::class, 'show']);
 Route::post('/cong-thuc', [CongThucController::class, 'store']);
@@ -74,6 +80,8 @@ Route::prefix('blogs')->group(function () {
 
  
 });
+
+
 
 
 // hien danh sach danh mục len trang chu
@@ -161,6 +169,15 @@ Route::middleware(['auth:api'])->group(function () {
     Route::delete('/user/cong-thuc-nguyen-lieu', [CongThucNguyenLieuController::class, 'destroy']);
 
 
+    //theo doi blog 
+    Route::post('/theo-doi/{id}', [TheoDoiController::class, 'follow']);
+    Route::delete('/theo-doi/{id}', [TheoDoiController::class, 'unfollow']);
+
+    Route::get('/theo-doi/check/{id}', [TheoDoiController::class, 'checkFollowing']);
+
+    Route::get('/theo-doi/dang-theo-doi', [TheoDoiController::class, 'danhSachDangTheoDoi']);
+    Route::get('/theo-doi/nguoi-theo-doi', [TheoDoiController::class, 'danhSachNguoiTheoDoi']);
+    
 });
 
 Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {

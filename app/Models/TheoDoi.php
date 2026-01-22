@@ -22,5 +22,15 @@ class TheoDoi extends Model
     {
         return $this->belongsTo(NguoiDung::class, 'ma_nguoi_duoc_theo_doi');
     }
-}
+
+    public function dangTheoDoi()
+    {
+         return $this->hasMany(TheoDoi::class, 'ma_nguoi_theo_doi');
+    }
+
+    public function nguoiTheoDoiToi()
+    {
+         return $this->hasMany(TheoDoi::class, 'ma_nguoi_duoc_theo_doi');
+    }
+} 
 
