@@ -150,6 +150,16 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('/cau-hoi', [CauHoiController::class, 'store']);
     Route::get('/cau-hoi-cua-toi', [CauHoiController::class, 'myQuestions']);
     Route::put('/blogs/{id}/trang-thai', [BlogController::class, 'updateTrangThai']);
+
+    //theo doi blog 
+    Route::post('/theo-doi/{id}', [TheoDoiController::class, 'follow']);
+    Route::delete('/theo-doi/{id}', [TheoDoiController::class, 'unfollow']);
+
+    Route::get('/theo-doi/check/{id}', [TheoDoiController::class, 'checkFollowing']);
+
+    Route::get('/theo-doi/dang-theo-doi', [TheoDoiController::class, 'danhSachDangTheoDoi']);
+    Route::get('/theo-doi/nguoi-theo-doi', [TheoDoiController::class, 'danhSachNguoiTheoDoi']);
+    
 });
 
 Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
