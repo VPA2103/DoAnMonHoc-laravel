@@ -207,11 +207,11 @@ Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
     Route::post('/users/{id}', [NguoiDungController::class, 'CapNhapNguoiDungTheoId']);
     Route::delete('/users/{id}', [NguoiDungController::class, 'XoaNguoiDungTheoId']);
 
-    Route::get('/nguyen-lieu', [NguyenLieuController::class, 'index']);
-    Route::get('/nguyen-lieu/{id}', [NguyenLieuController::class, 'show']);
-    Route::post('/nguyen-lieu', [NguyenLieuController::class, 'store']);
-    Route::put('/nguyen-lieu/{id}', [NguyenLieuController::class, 'update']);
-    Route::delete('/nguyen-lieu/{id}', [NguyenLieuController::class, 'destroy']);
+    Route::get('/admin/nguyen-lieu', [AdminNguyenLieuController::class, 'index']);
+    Route::get('/admin/nguyen-lieu/{id}', [AdminNguyenLieuController::class, 'show']);
+    Route::post('/admin/nguyen-lieu', [AdminNguyenLieuController::class, 'store']);
+    Route::put('/admin/nguyen-lieu/{id}', [AdminNguyenLieuController::class, 'update']);
+    Route::delete('/admin/nguyen-lieu/{id}', [AdminNguyenLieuController::class, 'destroy']);
 
     //danh gia 
     Route::get('/admin/danh-gia', [DanhGiaController::class, 'index']);
