@@ -14,25 +14,38 @@ class NguyenLieu extends Model
     protected $keyType = 'int';
 
     // ✅ BẬT timestamps để tự ghi created_at / updated_at
-    public $timestamps = false;
+    public $timestamps = true;
 
     // ✅ Cho phép create / update
     protected $fillable = [
-        'ma_cong_thuc',
+        // 'ma_cong_thuc',
         'ten_nguyen_lieu',
         'don_vi_tinh',
-        'so_luong'
+        // 'so_luong'
     ];
 
     /**
-     * 🔗 Quan hệ: Nguyên liệu thuộc về 1 công thức
+     * 🔗 Quan hệ: Nguyên liệu  thuộc về 1 công thức
      */
-    public function congThuc()
-    {
-        return $this->belongsTo(
-            CongThuc::class,
-            'ma_cong_thuc',
-            'ma_cong_thuc'
-        );
-    }
+    // public function congThuc()
+    // {
+    //     return $this->belongsTo(
+    //         CongThuc::class,
+    //         'ma_cong_thuc',
+    //         'ma_cong_thuc'
+    //     );
+    // }
+    /**
+ * Công thức sử dụng nguyên liệu này (quan hệ N–N)
+ */
+        public function congThucs()
+        {
+            return $this->belongsToMany(
+                CongThuc::class,
+                'cong_thuc_nguyen_lieu',
+                'ma_nguyen_lieu',
+                'ma_cong_thuc'
+            )->withPivot('so_luong');
+        }
+
 }

@@ -21,6 +21,9 @@ use App\Http\Controllers\Api\CauHoiController;
 use App\Http\Controllers\Api\BuocNauController;
 use App\Http\Controllers\Api\YeuThichController;
 use App\Http\Controllers\Api\ToCaoController;
+use App\Http\Controllers\Api\AdminNguyenLieuController;
+use App\Http\Controllers\Api\CongThucNguyenLieuController;
+
 Route::post('/upload', [UploadController::class, 'upload']);
 
 Route::get('/test-cloudinary', function () {
@@ -56,6 +59,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::get('/ke-hoach', [KeHoachBuaAnController::class, 'LayDanhSachKeHoachTrangChu']);
 Route::get('/ke-hoach/{id}', [KeHoachBuaAnController::class, 'LayKeHoachTrangChuId']);
 
+//congthuc  
 //congthuc
 //loc theo danh muc va do kho
 
@@ -158,6 +162,13 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/cau-hoi-cua-toi', [CauHoiController::class, 'myQuestions']);
     Route::put('/blogs/{id}/trang-thai', [BlogController::class, 'updateTrangThai']);
 
+    Route::get('/user/nguyen-lieu', [NguyenLieuController::class, 'index']);
+    Route::post('/user/cong-thuc-nguyen-lieu',[CongThucNguyenLieuController::class, 'store']);
+    Route::get('/user/cong-thuc/{id}/nguyen-lieu',[CongThucNguyenLieuController::class, 'indexByCongThuc']);
+        Route::put('/user/cong-thuc-nguyen-lieu', [CongThucNguyenLieuController::class, 'update']);
+    Route::delete('/user/cong-thuc-nguyen-lieu', [CongThucNguyenLieuController::class, 'destroy']);
+
+
     //theo doi blog 
     Route::post('/theo-doi/{id}', [TheoDoiController::class, 'follow']);
     Route::delete('/theo-doi/{id}', [TheoDoiController::class, 'unfollow']);
@@ -185,7 +196,7 @@ Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
     Route::post('/admin/danh-muc', [DanhMucController::class, 'store']);
     Route::put('/admin/danh-muc/{id}', [DanhMucController::class, 'update']);
     Route::delete('/admin/danh-muc/{id}', [DanhMucController::class, 'destroy']);
-
+ 
     Route::get('/admin/cong-thuc', [AdminController::class, 'layTatCaCongThuc']);
     Route::put('/admin/cong-thuc/{id}', [AdminController::class, 'updateTrangThai']);
 
@@ -201,8 +212,6 @@ Route::middleware(['auth:api', 'vai_tro:admin'])->group(function () {
     Route::post('/nguyen-lieu', [NguyenLieuController::class, 'store']);
     Route::put('/nguyen-lieu/{id}', [NguyenLieuController::class, 'update']);
     Route::delete('/nguyen-lieu/{id}', [NguyenLieuController::class, 'destroy']);
-
-
 
     //danh gia 
     Route::get('/admin/danh-gia', [DanhGiaController::class, 'index']);

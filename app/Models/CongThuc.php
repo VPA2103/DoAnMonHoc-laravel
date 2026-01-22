@@ -66,11 +66,17 @@ class CongThuc extends Model
     // 1 công thức có nhiều nguyên liệu
     public function nguyenLieus()
     {
-        return $this->hasMany(
-            NguyenLieu::class,
-            'ma_cong_thuc',
-            'ma_cong_thuc'
-        );
+        // return $this->hasMany(
+        //     NguyenLieu::class,
+        //     'ma_cong_thuc',
+        //     'ma_cong_thuc'
+        // );
+         return $this->belongsToMany(
+        NguyenLieu::class,
+        'cong_thuc_nguyen_lieu', // tên bảng pivot
+        'ma_cong_thuc',          // foreign key trên pivot trỏ tới this model (cong_thuc)
+        'ma_nguyen_lieu'         // foreign key trên pivot trỏ tới NguyenLieu
+    )->withPivot('so_luong');    // nếu pivot chứa so_luong
     }
 
     // Các bước nấu

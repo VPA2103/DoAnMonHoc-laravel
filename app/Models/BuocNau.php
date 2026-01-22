@@ -11,7 +11,7 @@ class BuocNau extends Model
 
     protected $table = 'buoc_nau';
     protected $primaryKey = 'ma_buoc_nau';
-    protected $fillable = ['ma_cong_thuc', 'so_thu_tu', 'noi_dung', 'hinh_anh'];
+    protected $fillable = ['ma_cong_thuc', 'so_thu_tu', 'noi_dung', 'hinh_anh','thoi_gian',];
     public $timestamps = false;
     public function congThuc()
     {
