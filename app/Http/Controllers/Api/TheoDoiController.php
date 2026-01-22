@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\CongThuc;
 use App\Models\TheoDoi;
 use Illuminate\Http\Request;
 
 class TheoDoiController extends Controller
 {
+
     public function follow(Request $request, $id)
     {
         $user = $request->user();
