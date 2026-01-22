@@ -27,6 +27,9 @@ Route::get('/test-cloudinary', function () {
     return config('cloudinary.cloud_url');
 });
 
+
+
+
 //search
 Route::get('/search', [SearchController::class, 'search']);
 
@@ -54,6 +57,8 @@ Route::get('/ke-hoach', [KeHoachBuaAnController::class, 'LayDanhSachKeHoachTrang
 Route::get('/ke-hoach/{id}', [KeHoachBuaAnController::class, 'LayKeHoachTrangChuId']);
 
 //congthuc
+//loc theo danh muc va do kho
+
 Route::get('/cong-thuc', [CongThucController::class, 'index']);
 Route::get('/cong-thuc/{id}', [CongThucController::class, 'show']);
 Route::post('/cong-thuc', [CongThucController::class, 'store']);
@@ -71,6 +76,8 @@ Route::prefix('blogs')->group(function () {
 
  
 });
+
+
 
 
 // hien danh sach danh mục len trang chu
