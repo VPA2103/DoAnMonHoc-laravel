@@ -187,8 +187,20 @@ class CongThucController extends Controller
 
    public function danhSachCongThuc(Request $request)
     {
-        $congThucs = CongThuc::with(['danhMuc', 'nguoiDung'])
-            ->where('trang_thai', 2)
+        $query = CongThuc::with(['danhMuc', 'nguoiDung'])
+            ->where('trang_thai', 2);
+
+        // 🔍 lọc độ khó
+        if ($request->filled('do_kho')) {
+            $query->where('do_kho', $request->do_kho);
+        }
+
+        // 🔍 lọc danh mục
+        if ($request->filled('ma_danh_muc')) {
+            $query->where('ma_danh_muc', $request->ma_danh_muc);
+        }
+
+        $congThucs = $query
             ->orderByDesc('ma_cong_thuc')
             ->paginate(9);
 
@@ -196,31 +208,21 @@ class CongThucController extends Controller
             return [
                 'ma_cong_thuc'  => $ct->ma_cong_thuc,
                 'ten_cong_thuc' => $ct->ten_cong_thuc,
-                'slug'          => $ct->slug,
                 'anh_cong_thuc' => $ct->anh_cong_thuc,
                 'do_kho'        => $ct->do_kho,
                 'thoi_gian_nau' => $ct->thoi_gian_nau,
-
                 'danh_muc' => [
-                    'ma_danh_muc'  => optional($ct->danhMuc)->ma_danh_muc,
-                    'ten_danh_muc' => optional($ct->danhMuc)->ten_danh_muc,
-                ],
-
-                'tac_gia' => [
-                    'ma_nguoi_dung' => optional($ct->nguoiDung)->ma_nguoi_dung,
-                    'ten_nguoi_dung'=> optional($ct->nguoiDung)->ten_nguoi_dung,
-                    'anh_dai_dien'  => optional($ct->nguoiDung)->anh_dai_dien,
+                    'ma_danh_muc'  => $ct->danhMuc->ma_danh_muc ?? null,
+                    'ten_danh_muc' => $ct->danhMuc->ten_danh_muc ?? null,
                 ],
             ];
         });
 
         return response()->json([
-            'status' => true,
-            'data'   => $data,
+            'data' => $data,
             'pagination' => [
                 'current_page' => $congThucs->currentPage(),
                 'last_page'    => $congThucs->lastPage(),
-                'per_page'     => $congThucs->perPage(),
                 'total'        => $congThucs->total(),
             ]
         ]);
@@ -290,5 +292,35 @@ class CongThucController extends Controller
             ]
         ]);
     }
+
+    // public function loc(Request $request)
+    // {
+    //     $query = CongThuc::with(['danhMuc', 'nguoiDung'])
+    //         ->where('trang_thai', 2); // chỉ công thức public
+
+    //     // 🔍 Lọc theo độ khó
+    //     if ($request->filled('do_kho')) {
+    //         $query->where('do_kho', $request->do_kho);
+    //     }
+
+    //     // 🔍 Lọc theo danh mục
+    //     if ($request->filled('ma_danh_muc')) {
+    //         $query->where('ma_danh_muc', $request->ma_danh_muc);
+    //     }
+
+    //     $congThucs = $query
+    //         ->orderByDesc('ma_cong_thuc')
+    //         ->paginate(9);
+
+    //     return response()->json([
+    //         'status' => true,
+    //         'data'   => $congThucs->items(),
+    //         'pagination' => [
+    //             'current_page' => $congThucs->currentPage(),
+    //             'last_page'    => $congThucs->lastPage(),
+    //             'total'        => $congThucs->total(),
+    //         ]
+    //     ]);
+    // }
 
 }
